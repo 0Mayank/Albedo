@@ -1,0 +1,243 @@
+{
+
+  "administrative":
+  {
+      "name" : "ADMINISTRATIVE",
+      "description" : "Administrative commands",
+      
+      "fields":
+      {
+        "kick":
+        {
+            "name" : "`KICK`",
+            "usage" : "sexy kick [user][reason]",
+            "value" : "Kicks a user from your server."
+        },
+
+        "ban":
+        {
+            "name" : "`BAN`",
+            "usage" : "sexy ban [user][reason]",
+            "value" : "Bans a user from your server."
+        },
+
+        "UNBAN":
+        {
+            "name" : "`UNBAN`",
+            "usage":"sexy unban [user]",
+            "value" : "Unbans a user from your server."
+        },
+          
+        "PREFIX":
+        {
+            "name" : "`PREFIX`",
+            "usage":"sexy prefix [new prefix]",
+            "value" : "Changes the prefix."
+        }
+    }
+  },
+
+  "fun":
+  {
+    "name" : "FUN",
+    "description" : "Commands for fun",
+
+    "fields":
+    {
+        "ciest":
+        {
+          "name" : "`CIEST`",
+          "usage":"sexy ciest [question]",
+          "value" : "Ask me any question and I'll answer it."
+        },
+
+        "emote":
+        {
+          "name" : "`EMOTE`",
+          "usage":"sexy emote [emote][amount]",
+          "value" : "Wanna print some emotes?"
+        },
+
+        "ded":
+        {
+          "name" : "`DED`",
+          "usage":"sexy ded",
+          "value" : "Find out how dead you're inside."
+        },
+
+        "desc":
+        {
+          "name":"`DESC`",
+          "usage":"sexy desc",
+          "value": "Description of the bot."
+        },
+
+        "dicc":
+        {
+          "name": "`DICC`",
+          "usage": "sexy dicc",
+          "value": "pp long? pp short? no pp? find out here."
+        }
+    }
+  },
+
+  "currency":
+  {
+      "name" : "CURRENCY",
+      "description" : "Commands related to our currency system",
+      "fields":
+      {
+        "flip":
+        {
+          "name" : "`FLIP`",
+          "usage":"sexy flip [amount] [guess(heads or tails)]",
+          "value": "Flips a coin. If your guess is correct, you win the amount you bet. Or you lose them"
+        },
+
+        "balance":
+        {
+          "name" : "`BALANCE`",
+          "usage":"sexy balance (user)",
+          "value": "Shows the balance of a user, if mentioned or your balance."
+        },
+
+        "deposit":
+        {
+          "name" : "`DEPOSIT`",
+          "usage":"sexy deposit [amount]",
+          "value": "Deposits the amount from your wallet to your bank."
+        },
+
+        "play":
+        {
+          "name" : "`WITHDRAW`",
+          "usage":"sexy withdraw [amount]",
+          "value" : "Withdraws the amount from your bank to your wallet."
+        },
+
+        "beg":
+        {
+          "name" : "`BEG`",
+          "usage":"sexy beg",
+          "value" : "Short on coins. Just become what you really are! A beggar!"
+        },
+
+        "steal":
+        {
+          "name" : "`STEAL`",
+          "usage":"sexy steal [user]",
+          "value" : "Time to steal! If you get lucky, you get a huge payload."
+        }
+      }
+  },
+
+  "music":
+  {
+    "name" : "MUSIC",
+    "description" : "Music commands",
+    "fields":
+    {
+        "play":
+        {
+          "name" : "`PLAY`",
+          "usage":"sexy play [song]",
+          "value" : "Plays the song."
+        },
+
+        "clear queue":
+        {
+          "name" : "`CLEARQUEUE`",
+          "usage" : "sexy clearqueue",
+          "value" : "Clears the play queue without leaving the channel."
+        },
+        
+        "jump queue":
+        {
+          "name" : "`JUMPQUEUE`",
+          "usage" : "sexy jumpqueue [old_index] [new_index]",
+          "value" : "Moves song at an index to `new_index` in queue."
+        },
+
+        "pause":
+        {
+          "name" : "`PAUSE`",
+          "usage": "sexy pause",
+          "value" : "Pauses the current song."
+        },
+
+        "resume":
+        {
+          "name" : "`RESUME`",
+          "usage": "sexy resume",
+          "value" : "Resumes the current song."
+        },
+
+        "loop":
+        {
+          "name" : "`LOOP`",
+          "usage": "sexy loop on/off",
+          "value" : "Loops the current song."
+        },
+
+        "stop":
+        {
+          "name" : "`STOP`",
+          "usage":"sexy stop",
+          "value" : "Stops the current song."
+        },
+
+        "skip":
+        {
+          "name" : "`SKIP`",
+          "usage":"sexy skip",
+          "value" : "Skips the current song and plays the next song in the queue."
+        },
+
+        "queue":
+        {
+          "name" : "`QUEUE`",
+          "usage":"sexy queue",
+          "value" : "Shows the current queue."
+        },
+
+        "remove song":
+        {
+          "name" : "`REMOVE SONG`",
+          "usage":"sexy remove [index of song]",
+          "value" : "Removes the song at a particular index in the queue."
+        },
+
+        "leave":
+        {
+          "name" : "`LEAVE`",
+          "usage":"sexy leave",
+          "value" : "Leaves the voice channel."
+        }
+
+        
+    }
+  },
+
+  "utility":
+  {
+    "name" : "UTILITY",
+    "description" : "Utility commands",
+
+    "fields":
+    {
+      "av":
+        {
+          "name" : "`AV`",
+          "usage":"sexy av [user]",
+          "value" : "Shows the avatar of the mentioned user."
+        },
+
+      "ping":
+        {
+          "name" : "`PING`",
+          "usage":"sexy ping",
+          "value" : "Shows the ping."
+        }
+    }
+  }
+}
