@@ -1,0 +1,30 @@
+{
+  "name": "sexybot",
+  "version": "1.0.0",
+  "description": "its a discord bot",
+  "main": "app.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "discord.js": "^11.5.1",
+    "express": "^4.16.4",
+    "fs": "^0.0.2",
+    "nhentai-api": "^2.0.4",
+    "nhentai-api-js": "^1.1.2",
+    "nhentai-js": "^3.2.0",
+    "snekfetch": "^4.0.4",
+    "sqlite3": "^4.0.8"
+  },
+  "author": "me",
+  "license": "ISC",
+  "keywords": [
+    "node",
+    "discord-js",
+    "express"
+  ]
+}

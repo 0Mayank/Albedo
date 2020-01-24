@@ -1,0 +1,13 @@
+{
+    "TOKEN": "// Bot Token Here",
+    "PREFIX": "sexy doujin ",
+    "COLOR": "#FFFFFF",
+    "OWNERS": [
+        "356808133735219212 497450643007602688"
+    ],
+    "LANG": [
+        "english",
+        "chinese",
+        "japanese"
+    ]
+}
