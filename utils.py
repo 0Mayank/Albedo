@@ -1,6 +1,15 @@
 import os
 import json
 
+def intcheck(it):                                                       #Interger checker
+    isit = True
+    try:
+        int(it)
+    except:
+        isit = False
+
+    return isit
+
 def all_cases(za_word):
     if len(za_word) == 1:
         if za_word.isalnum():
@@ -54,5 +63,7 @@ def format_seconds(time_seconds):
             minutes += 1
 
     return f"{days}d {hours}h {minutes}m {seconds}s"
+
+#def 
 
     

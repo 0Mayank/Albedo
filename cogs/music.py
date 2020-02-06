@@ -6,71 +6,53 @@ import math
 import random
 import utils as u
 import os
+import asyncio
 from discord.ext import commands
 from urllib import request
 from discord.utils import get
 from guildstate import state_instance
+from video import Video, YTDL_VIDEO_OPTS
 
 sexy_admins = os.environ.get("SEXY_ADMINS").split()
 
-codecs = [".webm", ".m4a"]
-
-YTDL_OPTS = {
+YTDL_PLAYLIST_OPTS = {
     "default_search": "ytsearch",
     "format": "bestaudio/best",
     "quiet": True,
-    "extract_flat": "in_playlist",
+    "playliststart": 1,
+    "playlistend": -1,
+    #"progress_hooks":[song_status],
 }
 
-class Video:
-    """Class containing information about a particular video."""
-
-    def __init__(self, url_or_search, requested_by, client):
+class Playlist:
+    '''Class contais information about some shits, wanna eat??'''           #todo change this comment
+    def __init__(self, url, requested_by, client, ctx, bot):
         """Plays audio from (or searches for) a URL."""
-        with youtube_dl.YoutubeDL(YTDL_OPTS) as ydl:
+        with youtube_dl.YoutubeDL(YTDL_PLAYLIST_OPTS) as ydl:
+            self.bot = bot
+            self.ctx = ctx
             self.requested_by = requested_by
-            video = self._get_info(url_or_search, requested_by)
-            video_format = video["formats"][0]
-            self.stream_url = video_format["url"]
-            self.video_url = video["webpage_url"]
-            self.title = video["title"]
-            self.uploader = video["uploader"] if "uploader" in video else ""
-            self.thumbnail = video[
-                "thumbnail"] if "thumbnail" in video else None
+            #self.za_playlist = self._get_playlist_songs(url, requested_by)
             self.client = client
+            self.url_list = self._get_playlist_songs(url, requested_by)
 
-    def _get_info(self, video_url, author):
-        with youtube_dl.YoutubeDL(YTDL_OPTS) as ydl:
-            #ydl.download([video_url])
-            info = ydl.extract_info(video_url, download=True)
-            for file in os.listdir("./"):
-                for i in codecs:    
-                    if file.endswith(i):
-                        data = u.retrieve("music.json")
-                        song_names = data["song"]
-                        if file not in song_names:
-                            namae = f"{video_url}{author.id}{str(author.guild)}{hash(author.guild)}{random.randint(0, 10000)}{i}"
-                            song_names += [namae]
-                            u.save("music.json", data)
-                            os.rename(file, namae)
-            video = None
+    def _get_playlist_songs(self, playlist_url, author):
+        with youtube_dl.YoutubeDL(YTDL_PLAYLIST_OPTS) as ydl:
+            info = ydl.extract_info(playlist_url, download=False)
+            za_playlist = []
             if "_type" in info and info["_type"] == "playlist":
-                return self._get_info(
-                    info["entries"][0]["url"], author)  # get info for first video
+                for i in info["entries"]:
+                    za_playlist += [self._get_playlist_songs(i["url"], author)]  # get info for first video
+                return za_playlist
             else:
-                video = info
-            return video
+                za_playlist = [playlist_url]
+                return za_playlist
 
-    def get_embed(self):
-        """Makes an embed out of this Video's information."""
-        embed = discord.Embed(
-            title=self.title, description=self.uploader, url=self.video_url)
-        embed.set_footer(
-            text=f"Requested by {self.requested_by.name}",
-            icon_url=self.requested_by.avatar_url)
-        if self.thumbnail:
-            embed.set_thumbnail(url=self.thumbnail)
-        return embed
+    async def feed_url(self):
+        play_command = self.bot.get_command("play")
+        for url in self.url_list:
+            await self.ctx.invoke(play_command, url)
+            await asyncio.sleep(1)
 
 async def audio_playing(ctx):
     #Checks that audio is currently playing before continuing.
@@ -115,7 +97,7 @@ class Music(commands.Cog):
     def get_state(self, guild):
         """Gets the state for `guild`, creating it if it does not exist."""
         return state_instance.get_state(guild)
-
+        
     @commands.command(aliases=["stop"])
     @commands.guild_only()
     #@commands.has_permissions(administrator=True)
@@ -365,6 +347,14 @@ class Music(commands.Cog):
             else:
                 raise commands.CommandError("You must use a valid index.")
 
+    @commands.command()
+    @commands.guild_only()
+    async def play_playlist(self, ctx, *, url):
+        """Plays playlist hosted at <url> (or performs a search for <url> and plays the first result)."""
+        client = ctx.guild.voice_client
+        owo_playlist = Playlist(url, ctx.author, client, ctx, self.bot)
+        await owo_playlist.feed_url()
+    
     @commands.command(brief="Plays audio from <url>.")
     @commands.guild_only()
     async def play(self, ctx, *, url):

@@ -2,57 +2,49 @@ import discord
 import os
 from itertools import cycle
 from discord.ext import commands, tasks
+from discord.utils import oauth_url
 import utils as u
-import json
 from guildstate import state_instance
 
 sexy_admins = os.environ.get("SEXY_ADMINS").split()
 
 offByDefault = ['debugmode.py', 'memberlog.py']
-command_prefix = u.all_cases("sexy ")
+command_prefix = u.all_cases("ss ")
 
 def get_prefix(bot, message):
-    state = state_instance.get_state(message.guild)
-    return command_prefix + [state.prefix] 
+    gstate = state_instance.get_state(message.guild)
+    return command_prefix + [gstate.prefix] 
 
 bot = commands.Bot(command_prefix=get_prefix)
-bot.remove_command("help")
+#bot.remove_command("help")
 
-status = cycle(['You','are','Gae'])                                     #Shows bot status
-@tasks.loop(seconds=2)
+status = cycle(['Thank You','for coming','to my','Ted Talk'])                                     #Shows bot status
+@tasks.loop(seconds=1)
 async def change_status():
-  await bot.change_presence(status = discord.Status.online, activity=discord.Game(next(status)))
+    await bot.change_presence(status=discord.Status.online, activity=discord.Game(next(status)))
 
 for filename in os.listdir('./cogs'):                                   #Loads all the cogs                  
     if filename in offByDefault:
         pass
     elif filename.endswith('.py'):
         bot.load_extension(f'cogs.{filename[:-3]}')
-def intcheck(it):                                                       #Interger checker
-    isit = True
-    try:
-        int(it)
-    except:
-        isit = False
 
-    return isit
-
-#Events
-@bot.event                   
+# Events
+@bot.event
 async def on_ready():
     change_status.start()
     print('Bot is ready!')
 
+
 @bot.event
 async def on_guild_join(guild):
-    state_instance.get_state(guild)   #PREFIX COMMAND SHIT
+    state_instance.get_state(guild)   
 
 @bot.event
 async def on_guild_remove(guild):
-    state_instance.get_state(guild)
+    state_instance.delete_state(guild)
 
-#Commands
-
+# Commands
 @bot.command()
 async def prefix(ctx, *, prefix = None):
     embed = discord.Embed(color = discord.Colour.from_rgb(0, 0, 0), timestamp = ctx.message.created_at)
@@ -116,19 +108,11 @@ async def ping(ctx):
 #     states = gstate.all_states()
 #     await ctx.send(states)
 
-@bot.command(aliases = ['clear','purge'])                               #CLEAR function
-async def _clear(ctx, amount, *, someBullshit = None):
-    if intcheck(amount):
-        await ctx.channel.purge(limit = int(amount)+1)
-        await ctx.send(f">>> {amount} messages deleted boss.")
-    elif amount == "all":
-        await ctx.channel.purge(limit = 201)
-        await ctx.send(f">>> 200 messages deleted boss.")
 
-@_clear.error
-async def clear_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(">>> Enter the amount of mesages to be cleared.")
+
+@bot.command()
+async def botinvite(ctx):
+    await ctx.send(oauth_url(bot.user.id, permissions=discord.Permissions(permissions=1580723312), guild=None, redirect_uri=None))
 
 @bot.command(aliases = ['copycat', 'cc', 'copyback'])
 async def _copycat(ctx, *, arg = None):

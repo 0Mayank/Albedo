@@ -3,23 +3,27 @@ import random
 from discord.ext import commands
 import utils as u
 
+
 def _exists(a_id):
     bet = u.retrieve("bet.json")
     if a_id in bet["id"]:
         return True
     return False
 
+
 def _initalise(user_id, force_initialise):
-        if _exists(user_id) == False or force_initialise == True:    
-            bet = u.retrieve("bet.json")    
-            bet["id"] += [user_id]
-            bet["wallet"] += [500]
-            bet["bank"] += [1000]
-            u.save("bet.json", bet)
+    if _exists(user_id) is False or force_initialise is True:
+        bet = u.retrieve("bet.json")    
+        bet["id"] += [user_id]
+        bet["wallet"] += [500]
+        bet["bank"] += [1000]
+        u.save("bet.json", bet)
+
 
 def _get_index(user):
     bet = u.retrieve("bet.json")
     return bet["id"].index(user)
+
 
 def _steal():
     chance = random.randrange(1, 100)
@@ -28,27 +32,31 @@ def _steal():
     else:
         return False
 
+
 def _get_dollars(index, location):
-        bet = u.retrieve("bet.json")
-        return bet[location][index]
-        
+    bet = u.retrieve("bet.json")
+    return bet[location][index]
+
+
 def _add_dollars(index, amount, location):
-        bet = u.retrieve("bet.json")
-        bet[location][index] += amount
-        u.save("bet.json", bet)
+    bet = u.retrieve("bet.json")
+    bet[location][index] += amount
+    u.save("bet.json", bet)
+
 
 def _remove_dollars(index, amount, location):
-        bet = u.retrieve("bet.json")
-        bet[location][index] -= amount
-        u.save("bet.json", bet)
+    bet = u.retrieve("bet.json")
+    bet[location][index] -= amount
+    u.save("bet.json", bet)
 
-#def _check_aukat()
+
+#def _check_errors(ctx):
+    #try 
+
 
 class currency(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self._exists = False
-        self.shit_exists = False
         self.ind = None
         self.member_ind = None
 
@@ -64,14 +72,15 @@ class currency(commands.Cog):
         guess = guess.lower()
         if guess not in guesses:
             await ctx.send("Invalid guess.")
-            return
+            raise commands.CommandError("invalid guess")
 
-        if amount <= 0:
+        elif amount <= 0:
             await ctx.send("clearly your pp and bren smol")
-            return
+            raise commands.CommandError("invalid amount")
         
         elif balance < amount: 
             await ctx.send(f"You don't have that much money.\nYour balance is ${balance}.")
+            raise commands.CommandError("balance < amount")
             
         elif result == guess:
             _add_dollars(self.ind, amount, "wallet")
