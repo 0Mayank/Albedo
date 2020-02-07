@@ -55,6 +55,8 @@ def _remove_dollars(index, amount, location):
 
 
 class currency(commands.Cog):
+    """Commands related to our currency system"""
+    
     def __init__(self, bot):
         self.bot = bot
         self.ind = None
@@ -63,6 +65,8 @@ class currency(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def flip(self, ctx, amount: int, guess: str):
+        """Flips a coin. If your guess is correct, you win the amount you bet. Or you lose them"""
+        
         _initalise(str(ctx.author.id), False)
         sliced_author = str(ctx.author)[:-5]
         self.ind = _get_index(str(ctx.author.id))
@@ -106,6 +110,8 @@ class currency(commands.Cog):
 
     @commands.command(aliases = ["bal"])
     async def balance(self, ctx, member: discord.Member = None):
+        """Shows the balance of a user, if mentioned or your balance."""
+        
         if member == None:
             member = ctx.author
         _initalise(str(member.id), False)            
@@ -116,6 +122,8 @@ class currency(commands.Cog):
         
     @commands.command(aliases = ["dep"])
     async def deposit(self, ctx, amount):
+        """Deposits the amount from your wallet to your bank."""
+
         _initalise(str(ctx.author.id), False)
         self.ind = _get_index(str(ctx.author.id))
         if str(amount) == "all":
@@ -136,6 +144,8 @@ class currency(commands.Cog):
 
     @commands.command(aliases = ["with"])
     async def withdraw(self, ctx, amount):
+        """Withdraws the amount from your bank to your wallet."""
+
         _initalise(str(ctx.author.id), False)
         self.ind = _get_index(str(ctx.author.id))
         if str(amount) == "all":
@@ -157,6 +167,8 @@ class currency(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 30, commands.BucketType.user)
     async def beg(self, ctx):
+        """Short on coins. Just become what you really are! A beggar!"""
+
         _initalise(str(ctx.author.id), False)
         msg_list = [
             "Your mom donated you ",
@@ -185,6 +197,8 @@ class currency(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 300, commands.BucketType.user)
     async def steal(self, ctx, member: discord.Member):
+        """Time to steal! If you get lucky, you get a huge payload."""
+
         _initalise(str(ctx.author.id), False)
         _initalise(str(member.id), False)
         self.ind = _get_index(str(ctx.author.id))

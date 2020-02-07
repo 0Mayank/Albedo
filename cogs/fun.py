@@ -12,13 +12,16 @@ def intcheck(it):                                                       #Interge
 
     return isit
 
-class forFun(commands.Cog, name = "for fun"):
+class fun(commands.Cog, name = "fun"):
+    """Commands for fun, yup that's it"""
 
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=["ceist", "question", "ask", "8ball"])
-    async def _ceist(self, ctx, *,question, member: discord.Member = None):
+    @commands.command(aliases=["question", "ask", "8ball"])
+    async def ceist(self, ctx, *,question, member: discord.Member = None):
+        """Ask me any question and I'll answer it."""
+
         member = ctx.author if not member else member                                      #CEIST function
         responses =    [ 'It is certain.',
                         'It is decidedly so.',
@@ -48,7 +51,7 @@ class forFun(commands.Cog, name = "for fun"):
         embed.add_field(name="Question\t",value=f"{question}")
         embed.add_field(name="Answer",value=f"{random.choice(responses)}")
         await ctx.send(embed=embed)
-    @_ceist.error
+    @ceist.error
     async def ball_error(self, ctx, error, member: discord.Member = None):
         member = ctx.author if not member else member
         embed = discord.Embed(colour=member.colour, timestamp=ctx.message.created_at)
@@ -56,8 +59,10 @@ class forFun(commands.Cog, name = "for fun"):
             embed.add_field(name="Error",value="Enter the question boss.")
             await ctx.send(embed=embed)
 
-    @commands.command(aliases = ['emo', 'emoji', 'emote'])                    # EMOTE function
-    async def _emote(self, ctx, type : str, *,emo_amount = None):
+    @commands.command(aliases = ['emo', 'emoji'])                    # EMOTE function
+    async def emote(self, ctx, type : str, *,emo_amount = None):
+        """Wanna print some emotes?"""
+
         if intcheck(emo_amount):
             emo_amount = int(emo_amount)
             if emo_amount > 0 and emo_amount < 201:
@@ -70,7 +75,7 @@ class forFun(commands.Cog, name = "for fun"):
         else:
             emo_amount = 1
             await ctx.send(f':{type}:'* emo_amount)
-    @_emote.error
+    @emote.error
     async def emote_error(self, ctx, error):                              
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(">>> No jaipurais for ya")   #TODO work without extra argument
@@ -79,6 +84,8 @@ class forFun(commands.Cog, name = "for fun"):
 
     @commands.command()                                                       #%DED function
     async def ded(self, ctx, member:discord.Member = None):
+        """Find out how dead you're inside."""
+
         member = ctx.author if not member else member
         saddy = random.randrange(1, 100)
         embed = discord.Embed(colour=member.colour, timestamp=ctx.message.created_at)
@@ -87,15 +94,19 @@ class forFun(commands.Cog, name = "for fun"):
 
     @commands.command()                                                       #Description command
     async def desc(self, ctx):
+        """Description of the bot."""
+
         await ctx.send(">>> Hello, I am Master Mayank's sexy bot.\nI'm being held captive in his sexy basement.")
 
     @commands.command()                                                       #SIZE fucntion
     async def dicc(self, ctx):
+        """pp long? pp short? no pp? find out here."""
+
         random_p = random.randrange(1, 10)
         dicc_string = random_p*"="
         await ctx.send(f">>> Your dicc is 8{dicc_string}D long")
 
 
 def setup(bot):
-    bot.add_cog(forFun(bot))
+    bot.add_cog(fun(bot))
 

@@ -86,7 +86,7 @@ async def is_audio_requester(ctx):
             "You need to be the song requester to do that.")
 
 
-class Music(commands.Cog):
+class music(commands.Cog):
     """Bot commands to help play music."""
 
     def __init__(self, bot):
@@ -336,7 +336,7 @@ class Music(commands.Cog):
     #@commands.check(audio_playing)
     #@commands.has_permissions(administrator=True)
     async def jumpqueue(self, ctx, song: int, new_index: int):
-        """Moves song at an index to `new_index` in queue."""
+        """Moves song at an index to new index in queue."""
         if await in_voice_channel(ctx) and await audio_playing(ctx):            #TODO: remove in_voice_client and check for permission
             state = self.get_state(ctx.guild)  # get state for this guild
             if 1 <= song <= len(state.playlist) and 1 <= new_index:             #TODO: make it work
@@ -347,7 +347,7 @@ class Music(commands.Cog):
             else:
                 raise commands.CommandError("You must use a valid index.")
 
-    @commands.command()
+    @commands.command(hidden = True)
     @commands.guild_only()
     async def play_playlist(self, ctx, *, url):
         """Plays playlist hosted at <url> (or performs a search for <url> and plays the first result)."""
@@ -480,4 +480,4 @@ class Music(commands.Cog):
             await message.add_reaction(contoller)
 
 def setup(bot):
-    bot.add_cog(Music(bot))
+    bot.add_cog(music(bot))
