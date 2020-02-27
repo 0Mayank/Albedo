@@ -2,7 +2,7 @@ import youtube_dl
 import os
 import discord
 import random
-import utils as u
+from utils_folder import utils as u
 
 codecs = [".webm", ".m4a"]
 

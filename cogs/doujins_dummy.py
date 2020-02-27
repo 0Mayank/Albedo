@@ -6,7 +6,7 @@ class doujinshi(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @commands.command()
+    @commands.command(aliases = ['rand'])
     async def random(self, ctx):
         """Get random doujinshi"""
         pass
@@ -16,15 +16,20 @@ class doujinshi(commands.Cog):
         """Read doujinshi by the Id you provided"""
         pass
 
-    @commands.command()
+    @commands.command(aliases = ['dl'])
     async def download(self, ctx, ID):
         """Download doujinshi by the Id you provided"""
         pass
 
-    @commands.command()
-    async def lang(self, ctx, language):
+    @commands.command(aliases = ['lang'])
+    async def language(self, ctx, language):
         """Get random doujinshi by the language you provided.
         Example: <chinese/english/japenese> or <ch/en/jp>."""
+        pass
+
+    @commands.command(aliases = ['par'])
+    async def parody(self, ctx, name, language):
+        """Get random doujin with provide name and language"""
         pass
 
 

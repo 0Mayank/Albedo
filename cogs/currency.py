@@ -1,11 +1,11 @@
 import discord
 import random
 from discord.ext import commands
-import utils as u
+from utils_folder import default as d
 
 
 def _exists(a_id):
-    bet = u.retrieve("bet.json")
+    bet = d.retrieve("bet.json")
     if a_id in bet["id"]:
         return True
     return False
@@ -13,15 +13,15 @@ def _exists(a_id):
 
 def _initalise(user_id, force_initialise):
     if _exists(user_id) is False or force_initialise is True:
-        bet = u.retrieve("bet.json")    
+        bet = d.retrieve("bet.json")    
         bet["id"] += [user_id]
         bet["wallet"] += [500]
         bet["bank"] += [1000]
-        u.save("bet.json", bet)
+        d.save("bet.json", bet)
 
 
 def _get_index(user):
-    bet = u.retrieve("bet.json")
+    bet = d.retrieve("bet.json")
     return bet["id"].index(user)
 
 
@@ -34,20 +34,20 @@ def _steal():
 
 
 def _get_dollars(index, location):
-    bet = u.retrieve("bet.json")
+    bet = d.retrieve("bet.json")
     return bet[location][index]
 
 
 def _add_dollars(index, amount, location):
-    bet = u.retrieve("bet.json")
+    bet = d.retrieve("bet.json")
     bet[location][index] += amount
-    u.save("bet.json", bet)
+    d.save("bet.json", bet)
 
 
 def _remove_dollars(index, amount, location):
-    bet = u.retrieve("bet.json")
+    bet = d.retrieve("bet.json")
     bet[location][index] -= amount
-    u.save("bet.json", bet)
+    d.save("bet.json", bet)
 
 
 #def _check_errors(ctx):
@@ -99,15 +99,7 @@ class currency(commands.Cog):
 
             embed.add_field(name=f"You tossed a coin.\nIt was {result}.", value = f"```diff\n-You lost ${amount}\n```\nYour balance: ${_get_dollars(self.ind, 'wallet')}")
             await ctx.send(embed=embed)
-
-    @flip.error
-    async def flip_error(self, ctx, error):
-        embed = discord.Embed(title="Cooldown", description = "**This command is ratelimited, please try again in {:.2f}s**".format(error.retry_after), timestamp = ctx.message.created_at)
-        if isinstance(error, commands.CommandOnCooldown): 
-            await ctx.send(embed=embed)
-        else:
-            raise error
-
+            
     @commands.command(aliases = ["bal"])
     async def balance(self, ctx, member: discord.Member = None):
         """Shows the balance of a user, if mentioned or your balance."""
@@ -186,13 +178,13 @@ class currency(commands.Cog):
         _add_dollars(self.ind, beg_amount, "wallet")
         return await ctx.send(f"{random.choice(msg_list)}${beg_amount}.")
 
-    @beg.error
-    async def beg_error(self, ctx, error):
-        embed = discord.Embed(title="Don't be so greedy", description = "**Consider it a blessing to be able to beg, try again in {:.2f}s**".format(error.retry_after), timestamp = ctx.message.created_at)
-        if isinstance(error, commands.CommandOnCooldown): 
-            await ctx.send(embed=embed)
-        else:
-            raise error
+    # @beg.error
+    # async def beg_error(self, ctx, error):
+    #     embed = discord.Embed(title="Don't be so greedy", description = "**Consider it a blessing to be able to beg, try again in {:.2f}s**".format(error.retry_after), timestamp = ctx.message.created_at)
+    #     if isinstance(error, commands.CommandOnCooldown): 
+    #         await ctx.send(embed=embed)
+    #     else:
+    #         raise error
 
     @commands.command()
     @commands.cooldown(1, 300, commands.BucketType.user)
@@ -235,13 +227,13 @@ class currency(commands.Cog):
         else:
             await ctx.send(f"You're too poor, very sed.")
         
-    @steal.error
-    async def steal_error(self, ctx, error):
-        embed = discord.Embed(title="Take a break bruh", description = f"**Don't be so hasty, succes takes time .Try again in {int(error.retry_after/60)}m and {str(error.retry_after/60)[2:4]}s**", timestamp = ctx.message.created_at)
-        if isinstance(error, commands.CommandOnCooldown): 
-            await ctx.send(embed=embed)
-        else:
-            raise error
+    # @steal.error
+    # async def steal_error(self, ctx, error):
+    #     embed = discord.Embed(title="Take a break bruh", description = f"**Don't be so hasty, succes takes time .Try again in {int(error.retry_after/60)}m and {str(error.retry_after/60)[2:4]}s**", timestamp = ctx.message.created_at)
+    #     if isinstance(error, commands.CommandOnCooldown): 
+    #         await ctx.send(embed=embed)
+    #     else:
+    #         raise error
 
 
 def setup(bot):

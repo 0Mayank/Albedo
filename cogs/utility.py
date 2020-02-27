@@ -40,7 +40,7 @@ class utility(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command(aliases = ['cc', 'copyback'])
-    async def copycat(self, ctx, *, arg = None):
+    async def copycat(self, ctx, *, arg: commands.clean_content(fix_channel_mentions=True)):
         """Just re-sends the text you sent"""
         
         await ctx.send(arg)

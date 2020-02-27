@@ -1,19 +1,23 @@
-import discord
 import asyncio
-import youtube_dl
 import logging
 import math
-import random
-import utils as u
 import os
-import asyncio
-from discord.ext import commands
+import random
 from urllib import request
-from discord.utils import get
-from guildstate import state_instance
-from video import Video, YTDL_VIDEO_OPTS
+import requests
 
-sexy_admins = os.environ.get("SEXY_ADMINS").split()
+import discord
+import youtube_dl
+from discord.ext import commands
+from discord.utils import get
+
+from utils_folder import default as u
+from utils_folder.data import state_instance
+from video import YTDL_VIDEO_OPTS, Video
+
+config = u.get("config.json")
+
+al_admins = config.almins
 
 YTDL_PLAYLIST_OPTS = {
     "default_search": "ytsearch",
@@ -68,7 +72,7 @@ async def in_voice_channel(ctx):
     #Checks that the command sender is in the same voice channel as the client.
     voice = ctx.author.voice
     bot_voice = ctx.guild.voice_client
-    if (voice and bot_voice and voice.channel and bot_voice.channel and voice.channel == bot_voice.channel) or str(ctx.author.id) in sexy_admins:
+    if (voice and bot_voice and voice.channel and bot_voice.channel and voice.channel == bot_voice.channel) or ctx.author.id in al_admins:
         return True
     else:
         return False
@@ -78,7 +82,7 @@ async def is_audio_requester(ctx):
     music = ctx.bot.get_cog("Music")
     state = music.get_state(ctx.guild)
     permissions = ctx.channel.permissions_for(ctx.author)
-    if permissions.administrator or state.is_requester(ctx.author) or str(ctx.author.id) in sexy_admins:
+    if permissions.administrator or state.is_requester(ctx.author) or ctx.author.id in al_admins:
         return True
     else:
         await ctx.send("You need to be the song requester to do that.")
@@ -106,7 +110,7 @@ class music(commands.Cog):
         client = ctx.guild.voice_client
         state = self.get_state(ctx.guild)
         if client and client.channel:
-            if ctx.channel.permissions_for(ctx.author).administrator or str(ctx.author.id) in sexy_admins:    
+            if ctx.channel.permissions_for(ctx.author).administrator or ctx.author.id in al_admins:    
                 state.loop = False
                 await client.disconnect()
                 dicc = u.retrieve("music.json")
@@ -148,7 +152,7 @@ class music(commands.Cog):
     async def pause(self, ctx):
         """Pauses any currently playing audio."""
         client = ctx.guild.voice_client
-        if await in_voice_channel(ctx) and await is_audio_requester(ctx) and await audio_playing(ctx) or str(ctx.author.id) in sexy_admins:
+        if await in_voice_channel(ctx) and await is_audio_requester(ctx) and await audio_playing(ctx) or ctx.author.id in al_admins:
             self._pause_audio(client)
 
     def _pause_audio(self, client):
@@ -186,7 +190,7 @@ class music(commands.Cog):
         state = self.get_state(ctx.guild)
         client = ctx.guild.voice_client
         if await in_voice_channel(ctx) and await audio_playing(ctx):    
-            if state.is_requester(ctx.author) or str(ctx.author.id) in sexy_admins: #or ctx.channel.permissions_for(ctx.author).administrator
+            if state.is_requester(ctx.author) or ctx.author.id in al_admins: #or ctx.channel.permissions_for(ctx.author).administrator
                 # immediately skip if requester or admin
                 state.loop = False
                 client.stop()
@@ -302,7 +306,7 @@ class music(commands.Cog):
     #@commands.has_permissions(administrator=True)
     async def clearqueue(self, ctx):
         """Clears the play queue without leaving the channel."""
-        if ctx.channel.permissions_for(ctx.author).administrator and await audio_playing(ctx) or str(ctx.author.id) in sexy_admins:            #TODO: remove in_voice_client and check for permission
+        if ctx.channel.permissions_for(ctx.author).administrator and await audio_playing(ctx) or ctx.author.id in al_admins:            #TODO: remove in_voice_client and check for permission
             dicc = u.retrieve("music.json")
             music_list1 = dicc["song"]
             songs_queued = []
@@ -319,7 +323,7 @@ class music(commands.Cog):
     async def remove(self, ctx, song: int):
         """Removes a song in the queue"""
         state = self.get_state(ctx.guild)
-        if await in_voice_channel(ctx) and await audio_playing(ctx) and state.is_song_requester(ctx.author, (song - 1)) or str(ctx.author.id) in sexy_admins:
+        if await in_voice_channel(ctx) and await audio_playing(ctx) and state.is_song_requester(ctx.author, (song - 1)) or ctx.author.id in al_admins:
             if song <= len(state.playlist) and song > 0:
                 await ctx.send(f"Removed {state.playlist[song - 1].title}")
                 del state.playlist[song - 1]
@@ -378,7 +382,7 @@ class music(commands.Cog):
                     await self._add_reaction_controls(message)
                 else:
                     users_in_channel = len([member for member in ctx.guild.voice_client.channel.members if not member.bot]) 
-                    if (len(state.playlist)) == 0 or users_in_channel == 0 or str(ctx.author.id) in sexy_admins:   
+                    if (len(state.playlist)) == 0 or users_in_channel == 0 or ctx.author.id in al_admins:   
                         dicc = u.retrieve("music.json")
                         music_list1 = dicc["song"]
                         songs_queued = []
@@ -426,7 +430,6 @@ class music(commands.Cog):
                 raise commands.CommandError(
                     "You need to be in a voice channel to do that.")
                 
-
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction: discord.reaction, user: discord.user):
         #Respods to reactions added to the client's messages, allowing reactions to control playback.
@@ -438,7 +441,7 @@ class music(commands.Cog):
                 permissions = message.channel.permissions_for(user)
                 guild = message.guild
                 state = self.get_state(guild)
-                if permissions.administrator or (user_in_channel and state.is_requester(user)) or str(user.id) in sexy_admins:
+                if permissions.administrator or (user_in_channel and state.is_requester(user)) or user.id in al_admins:
                     client = message.guild.voice_client
                     if reaction.emoji == "⏯":
                         # pause audio
@@ -478,6 +481,8 @@ class music(commands.Cog):
         CONTROLS = ["⏮", "⏯", "⏭"]
         for contoller in CONTROLS:
             await message.add_reaction(contoller)
+
+    
 
 def setup(bot):
     bot.add_cog(music(bot))

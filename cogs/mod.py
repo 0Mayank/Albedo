@@ -1,13 +1,15 @@
 import discord
 from discord.ext import commands
 from discord.utils import get
-from guildstate import state_instance
-import utils as u
+from utils_folder.data import state_instance
+from utils_folder.default import intcheck, get as default_get
 import tracemalloc
 import os
 tracemalloc.start()
 
-sexy_admins = os.environ.get("SEXY_ADMINS").split()
+config = default_get("config.json")
+
+al_admins = config.almins
 
 def role_is_higher(roles, author, member):
     a_role = roles.index(author.top_role)
@@ -41,7 +43,7 @@ class mod(commands.Cog):
         roles = state_instance.get_state(ctx.guild).roles
         if not role_is_higher(roles, ctx.author, member):
             return await ctx.send(f"Ara Ara, f{ctx.author.name} looks like you are trying to kick someone superior to you, futile attempts")
-        if str(member.id) in sexy_admins:
+        if member.id in al_admins:
             return await ctx.send(f"Sorry, i will not betray my masters at any cost")
         await ctx.send(f">>> Kicked {member_name}")
         await member.kick(reason = reason)
@@ -62,7 +64,7 @@ class mod(commands.Cog):
             return await ctx.send("Yamete, here is the suicide prevention helpline: ")
         if not role_is_higher(roles, ctx.author, member):
             return await ctx.send(f"Ara Ara, f{ctx.author.name} looks like you are trying to ban someone superior to you, futile attempts")
-        if str(member.id) in sexy_admins:
+        if member.id in al_admins:
             return await ctx.send(f"Sorry, i will not betray my masters at any cost")
         await ctx.send(f">>> banned {member_name}")
         await member.ban(reason = reason)
@@ -140,11 +142,12 @@ class mod(commands.Cog):
         if isinstance(error, commands.MissingPermissions):
             await ctx.send(">>> Heck, looks like you are missing some permissions.")
 
-    @commands.command(aliases = ['purge'], hidden = False)                               #CLEAR function
+    @commands.command(aliases = ['purge'], hidden = False)   
+    @commands.has_permissions(manage_messages = True)                            #CLEAR function
     async def clear(self, ctx, amount, *, someBullshit = None):
         """Clear the given amount of messages(all for deleting 200 messages)"""
         
-        if u.intcheck(amount):
+        if intcheck(amount):
             await ctx.channel.purge(limit = int(amount)+1)
             await ctx.send(f">>> {amount} messages deleted boss.", delete_after = 5)
         elif amount == "all":
@@ -152,6 +155,8 @@ class mod(commands.Cog):
             await ctx.send(f">>> 200 messages deleted boss.", delete_after = 5)
     @clear.error
     async def clear_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            return await ctx.send(">>> Heck, looks like you are missing some permissions.")
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send(">>> Enter the amount of mesages to be cleared.")
 
