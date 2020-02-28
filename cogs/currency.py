@@ -1,7 +1,7 @@
 import discord
 import random
 from discord.ext import commands
-from utils_folder import default as d
+from my_utils import default as d
 
 
 def _exists(a_id):

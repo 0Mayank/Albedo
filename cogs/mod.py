@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
 from discord.utils import get
-from utils_folder.data import state_instance
-from utils_folder.default import intcheck, get as default_get
+from my_utils.guildstate import state_instance
+from my_utils.default import intcheck, get as default_get
 import tracemalloc
 import os
 tracemalloc.start()

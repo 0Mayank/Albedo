@@ -1,6 +1,6 @@
 import discord
 
-from utils_folder import default
+from my_utils import default
 from discord.ext import commands
 
 almins = default.get("config.json").almins

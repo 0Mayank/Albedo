@@ -1,11 +1,13 @@
-import discord
 import os
-from utils_folder import default as d, default
+
+import discord
 from discord.ext import commands, tasks
-from utils_folder.data import state_instance
 from discord.utils import oauth_url
 
-config = default.get("config.json")
+from my_utils import default as d
+from my_utils.guildstate import state_instance
+
+config = d.get("config.json")
 
 al_admins = config.almins
 

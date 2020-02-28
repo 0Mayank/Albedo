@@ -8,7 +8,7 @@ import requests
 from io import BytesIO
 
 from discord.ext import commands
-from utils_folder import permissions, default, dataIO
+from my_utils import permissions, default, dataIO
 
 
 class admin(commands.Cog):
@@ -16,20 +16,6 @@ class admin(commands.Cog):
         self.bot = bot
         self.config = default.get("config.json")
         self._last_result = None
-
-    @commands.command()
-    async def amiadmin(self, ctx):
-        """ Are you admin? """
-        if ctx.author.id in self.config.owners:
-            return await ctx.send(f"Yes **{ctx.author.name}** you are admin! ✅")
-
-        # Please do not remove this part.
-        # I would love to be credited as the original creator of the source code.
-        #   -- AlexFlipnote
-        if ctx.author.id == 86477779717066752:
-            return await ctx.send(f"Well kinda **{ctx.author.name}**.. you still own the source code")
-
-        await ctx.send(f"no, heck off {ctx.author.name}")
 
     @commands.command()
     @commands.check(permissions.is_owner)
@@ -203,6 +189,32 @@ class admin(commands.Cog):
         except TypeError:
             await ctx.send("You need to either provide an image URL or upload one with the command")
 
+    @commands.command(aliases = ["api_for", "api"])
+    @commands.check(permissions.is_owner)
+    async def search_api(self, ctx, category = ""):
+        """ Search for some apis """
+        if category != "":
+            your_api = requests.get(f"https://api.publicapis.org/entries?category={category.lower()}&https=true").json()
+        elif category.lower() == "categories":
+            your_api = requests.get(f"https://api.publicapis.org/categories").json()
+        else:
+            your_api = requests.get("https://api.publicapis.org/random?auth=null").json()
+        if your_api['count'] == 0:
+            return await ctx.send("No APIs found")
+        apis = f"{your_api['entries'][0]['Category']} apis\n"
+        def auth(index):
+            if your_api['entries'][i]['Auth'] != None:
+                return your_api['entries'][i]['Auth']
+            return "None"
+
+        for i in range(your_api["count"]):
+            apis += f"**{i+1}**. {your_api['entries'][i]['API']} - {your_api['entries'][i]['Description']} | Auth: {auth(i)} | Cors: {your_api['entries'][i]['Cors']} | Link: {your_api['entries'][i]['Link']}\n"
+        if len(str(apis)) > 1999:
+            apis = apis[:2000][::-1]
+            arr = apis.index(".")
+            apis = apis[arr:][::-1]
+
+        return await ctx.send(apis)
 
 def setup(bot):
     bot.add_cog(admin(bot))

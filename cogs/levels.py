@@ -10,7 +10,7 @@ from dateutil.parser import parse
 from discord.ext import commands, tasks
 from PIL import Image, ImageDraw, ImageFont, ImageOps, ImageTk
 
-from utils_folder import default as d, permissions
+from my_utils import default as d, permissions
 
 def _exist(user_id):
     profiles = d.retrieve("profile.json")

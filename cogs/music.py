@@ -11,9 +11,9 @@ import youtube_dl
 from discord.ext import commands
 from discord.utils import get
 
-from utils_folder import default as u
-from utils_folder.data import state_instance
-from video import YTDL_VIDEO_OPTS, Video
+from my_utils import default as u
+from my_utils.guildstate import state_instance
+from my_utils.video import YTDL_VIDEO_OPTS, Video
 
 config = u.get("config.json")
 

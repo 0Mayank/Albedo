@@ -1,8 +1,10 @@
 import discord
 
-from utils_folder import permissions
+from my_utils import permissions
 from discord.ext.commands import AutoShardedBot, DefaultHelpCommand
 import os
+
+Hidden_cogs = ["memberlog", "events"]
 
 class Bot(AutoShardedBot):
     def __init__(self, *args, prefix=None, **kwargs):
@@ -24,14 +26,15 @@ class HelpCommand(DefaultHelpCommand):
         color = discord.Colour.from_rgb(0,250,141), timestamp = ctx.message.created_at)
         
         for cog in mapping.keys():
-            if cog != None :    
-                if cog.qualified_name != "debugmode":
+            if cog != None:    
+                if len(cog.get_commands()) != 0:
+                    if not permissions.is_owner(ctx):
+                        if cog.qualified_name == "admin":
+                            continue
                     commands = ''
                     for command in mapping[cog]:
                         commands += f"_{str(command)}_|"
                     embed.add_field(name = "**{}**".format(cog.qualified_name.upper()), value = f"`{self.clean_prefix}help {cog.qualified_name}`\n", inline= False)
-            elif cog == None:
-                pass
 
         await ctx.send(embed = embed)
 
@@ -73,12 +76,8 @@ class HelpCommand(DefaultHelpCommand):
 
     async def send_cog_help(self, cog):
         ctx = self.context
-        
-        # if cog.qualified_name.lower() in admin_only:
-        #     if ctx.bot.is_owner(ctx.author):
-        #         pass
-        #     else:
-        #         return
+        if len(cog.get_commands()) == 0:
+            return await ctx.send(f'No command "{cog.qualified_name}" found.')
         
         embed = discord.Embed(
             title = cog.qualified_name.upper(),
@@ -89,7 +88,7 @@ class HelpCommand(DefaultHelpCommand):
         for command in filtered:
             embed.add_field(name = f"**{command.name}**", value = "_{}_".format(command.help if command.help else "Crap, forgot to write this shit"), inline=False)
 
-        await ctx.send(embed = embed)
+        return await ctx.send(embed = embed)
 
 class HelpFormat(DefaultHelpCommand):
     def get_destination(self, no_pm: bool = False):
@@ -122,57 +121,3 @@ class HelpFormat(DefaultHelpCommand):
             destination = self.get_destination(no_pm=True)
             await destination.send("Couldn't send help to you due to blocked DMs...")
 
-class _states:
-    ''' contains the states for an instance of bot '''
-    __slots__ = ('states')
-    def __init__(self):
-        self.states = {}
-
-    def get_state(self, guild):
-        """Gets the state for `guild`, creating it if it does not exist."""
-        if guild.id in self.states:
-            return self.states[guild.id]
-        else:
-            self.states[guild.id] = GuildState(guild)
-            return self.states[guild.id]
-
-    def delete_state(self, guild):
-        """Delete the state of a guild"""
-        del self.states[guild.id]
-        
-    def all_states(self):
-        return self.states
-
-class GuildState:
-    ''' This class manages per-guild states '''
-    __slots__ = ('server', 'roles', 'volume', 'playlist', 'skip_votes', 'now_playing', 'loop', 'temp', 'loopall', 'prefix', 'mute_exists', 'debugmode', 'desc')
-    def __init__(self, server):
-        self.server = server
-        self.roles = server.roles
-        self.volume = 1
-        self.playlist = []
-        self.skip_votes = set()
-        self.now_playing = None
-        self.loop = False
-        self.temp = False
-        self.loopall = False 
-        self.prefix = "/"
-        self.mute_exists = False
-        self.debugmode = False
-        self.desc = True
-
-    def is_requester(self, user):
-        return self.now_playing.requested_by == user
-    
-    def is_song_requester(self, user, index):
-        return self.playlist[index].requested_by == user
-
-    def get_var(self, variable):
-        var = getattr(self, variable)
-        return var
-    
-    def set_var(self, variable, value):
-        setattr(self, variable, value)
-        return
-
-state_instance = _states()

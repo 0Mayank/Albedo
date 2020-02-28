@@ -1,12 +1,13 @@
+import os
+
 import discord
 from discord.ext import commands
-import os
-from utils_folder import default, utils as u
-from utils_folder.data import Bot, HelpCommand, state_instance
 
-config = default.get("config.json")
-print(type(config))
-print(config)
+from my_utils import default as u
+from my_utils.data import Bot, HelpCommand
+from my_utils.guildstate import state_instance
+
+config = u.get("config.json")
 
 offByDefault = ['debugmode.py', 'memberlog.py']
 command_prefix = u.all_cases(config.prefix)

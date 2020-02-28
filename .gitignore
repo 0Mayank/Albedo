@@ -17,6 +17,11 @@ youtube-wGUroMhu1M0-Sword_Art_Online_Alicization_-_War_of_Underworld_Ending_1_-_
 __pycache__/
 cogs/__pycache__/
 ec2-3-92-61-254.compute-1.amazonaws.com.rdp
+.mypy_cache
+noticeme.gif
+output.png
+overlap.png
+image.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -5,11 +5,11 @@ import os
 from datetime import datetime
 from discord.ext import commands
 from discord.ext.commands import errors
-from utils_folder import default
-from utils_folder.data import state_instance
+from my_utils import default
+from my_utils.guildstate import state_instance
 
 
-class Events(commands.Cog):
+class events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.config = default.get("config.json")
@@ -106,4 +106,4 @@ class Events(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Events(bot))
+    bot.add_cog(events(bot))

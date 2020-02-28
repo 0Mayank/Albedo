@@ -8,7 +8,7 @@ import requests
 import asyncio
 
 from io import BytesIO
-from utils_folder import lists, permissions, default, argparser
+from my_utils import lists, permissions, default, argparser
 
 def intcheck(it):                                                       #Interger checker
     isit = True
@@ -19,7 +19,7 @@ def intcheck(it):                                                       #Interge
 
     return isit
 
-class fun(commands.Cog, name = "fun"):
+class fun(commands.Cog):
     """Commands for fun, yup that's it"""
 
     def __init__(self, bot):
@@ -141,7 +141,7 @@ class fun(commands.Cog, name = "fun"):
     async def urban(self, ctx, *, search: str):
         """ Find the 'best' definition to your words """
         async with ctx.channel.typing():
-            url = await requests.get(f'https://api.urbandictionary.com/v0/define?term={search}').json()
+            url = requests.get(f'https://api.urbandictionary.com/v0/define?term={search}').json()
 
             if url is None:
                 return await ctx.send("I think the API broke...")
@@ -151,11 +151,18 @@ class fun(commands.Cog, name = "fun"):
 
             result = sorted(url['list'], reverse=True, key=lambda g: int(g["thumbs_up"]))[0]
 
-            definition = result['definition']
+            raw_definition = result['definition']
+            definition = ""
+            for value in raw_definition:
+                if value == "[" or value == "]":
+                    definition += "**"
+                else:
+                    definition += value
             if len(definition) >= 1000:
                 definition = definition[:1000]
                 definition = definition.rsplit(' ', 1)[0]
                 definition += '...'
+            
 
             embed = discord.Embed(
                 title = "📚 Urban Dictionary 📚",
@@ -206,7 +213,7 @@ class fun(commands.Cog, name = "fun"):
         
         while 1:
             try:
-                reaction, user = await self.bot.wait_for('reaction_add', timeout=60, check=rcheck)  # checks message reactions
+                reaction = await self.bot.wait_for('reaction_add', timeout=60, check=rcheck)[0]  # checks message reactions
             except asyncio.TimeoutError:  # session has timed out what a fucking nerd
                 try:
                     await message.clear_reactions()
@@ -219,6 +226,40 @@ class fun(commands.Cog, name = "fun"):
             elif str(reaction.emoji) == '<:al_down:681864001948614684>':
                 downvote = requests.request("POST", f"https://joke3.p.rapidapi.com/v1/joke/{joke['id']}/downvote", headers=headers).json()
                 await message.edit(content=f"{downvote['content']}\n> <:al_up:681864791555440681>: {downvote['upvotes']} <:al_down:681864001948614684>: {downvote['downvotes']}")
+
+    @commands.command(aliases=['quote'])
+    async def quotes(self, ctx):
+        url = "https://quotes15.p.rapidapi.com/quotes/random/"
+
+        querystring = {"language_code":"en"}
+
+        headers = {
+            'x-rapidapi-host': "quotes15.p.rapidapi.com",
+            'x-rapidapi-key': "1adab39b32msh3ace9d305db7522p133436jsn292ad15e4db3"
+            }
+
+        response = requests.request("GET", url, headers=headers, params=querystring).json()
+        await ctx.send(f"_{response['content']}_\n- {response['originator']['name']}")
+
+    @commands.command(aliases=['randomimage','wikihow'])
+    async def wiki(self, ctx):
+
+        url = "https://hargrimm-wikihow-v1.p.rapidapi.com/images"
+        querystring = {"count":"1"}
+
+        headers = {
+            'x-rapidapi-host': "hargrimm-wikihow-v1.p.rapidapi.com",
+            'x-rapidapi-key': "1adab39b32msh3ace9d305db7522p133436jsn292ad15e4db3"
+            }
+
+        response = requests.request("GET", url, headers=headers, params=querystring).json()
+        embed = discord.Embed(
+            color = discord.Colour.from_rgb(0,250,141), timestamp = ctx.message.created_at)
+        embed.set_author(name=f"Totally random wikihow images")
+        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+        embed.set_image(url=response['1'])
+        await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(fun(bot))
