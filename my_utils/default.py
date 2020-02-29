@@ -108,11 +108,12 @@ def retrieve(jsonfile):
        data = json.load(f)
     return data
 
-def delete(file, jsonFile, keyName):
+def delete(file, jsonFile = None, keyName = None):
     os.remove(file)
-    data = retrieve(jsonFile)
-    data[keyName].remove(file)
-    save(jsonFile, data)
+    if jsonFile != None and keyName != None:   
+        data = retrieve(jsonFile)
+        data[keyName].remove(file)
+        save(jsonFile, data)
 
 def format_seconds(time_seconds):
     """Formats some number of seconds into a string of format d days, x hours, y minutes, z seconds"""
@@ -130,8 +131,15 @@ def format_seconds(time_seconds):
         elif seconds >= 60:
             seconds -= 60
             minutes += 1
-
-    return f"{days}d {hours}h {minutes}m {seconds}s"
+    seconds = int(seconds)
+    if days != 0:
+        return f"{days}d {hours}h {minutes}m {seconds}s"
+    elif hours != 0:
+        return f"{hours}h {minutes}m {seconds}s"
+    elif minutes != 0:
+        return f"{minutes}m {seconds}s"
+    else:
+        return f"{seconds}s"
 
 def check_availabilty(ctx):
     state = state_instance.get_state(ctx.guild)

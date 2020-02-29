@@ -129,12 +129,6 @@ class fun(commands.Cog):
     async def duck(self, ctx):
         """ Posts a random duck """
         await self.randomimageapi(ctx, 'https://random-d.uk/api/v1/random', 'url')
-
-    @commands.command(aliases = ['wryyy'])
-    @commands.cooldown(1, 2, commands.BucketType.user)
-    async def teset(self, ctx, url):
-        """ Testing purposes """
-        await self.api_img_creator(ctx, url, "random.png", "Take this beetch")
     
     @commands.command()
     @commands.cooldown(1, 2, commands.BucketType.user)
@@ -213,7 +207,7 @@ class fun(commands.Cog):
         
         while 1:
             try:
-                reaction = await self.bot.wait_for('reaction_add', timeout=60, check=rcheck)[0]  # checks message reactions
+                reaction, user = await self.bot.wait_for('reaction_add', timeout=60, check=rcheck)  # checks message reactions
             except asyncio.TimeoutError:  # session has timed out what a fucking nerd
                 try:
                     await message.clear_reactions()

@@ -39,7 +39,7 @@ class events(commands.Cog):
 
         elif isinstance(err, errors.CommandOnCooldown):
             embed = discord.Embed(title="Cooldown", color=discord.Colour.from_rgb(0,250,141), 
-            description="**This command is on cooldown... try again in {:.2f}s**".format(err.retry_after), 
+            description="**This command is on cooldown... try again in {}**".format(default.format_seconds(err.retry_after)), 
             timestamp=ctx.message.created_at)
 
             await ctx.send(embed=embed)

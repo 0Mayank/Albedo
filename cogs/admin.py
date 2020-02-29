@@ -5,6 +5,7 @@ import importlib
 import os
 import sys
 import requests
+import asyncio
 from io import BytesIO
 
 from discord.ext import commands
@@ -93,6 +94,7 @@ class admin(commands.Cog):
         await ctx.send('Rebooting now...')
         time.sleep(1)
         self.bot.close()
+        sys.exit()
 
     @commands.command()
     @commands.check(permissions.is_owner)
@@ -215,6 +217,45 @@ class admin(commands.Cog):
             apis = apis[arr:][::-1]
 
         return await ctx.send(apis)
+
+    @commands.group(aliases = ["file"])
+    @commands.check(permissions.is_owner)
+    async def fil(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help(str(ctx.command))
+
+    @fil.group()
+    @commands.check(permissions.is_owner)
+    async def add(self, ctx, location = ""):
+        if len(ctx.message.attachments) == 1 and location != "":
+            await ctx.message.attachments[0].save(f"{location}\{ctx.message.attachments[0].filename}")
+        elif len(ctx.message.attachments) == 1 and location == "":
+            await ctx.message.attachments[0].save(f"{ctx.message.attachments[0].filename}")
+        else:
+            return await ctx.send("Provide a file as an attachment")
+        return await ctx.send(f"The {ctx.message.attachments[0].filename} has been added")
+    
+    @fil.group()
+    @commands.check(permissions.is_owner)
+    async def remove(self, ctx, file_name_with_path):
+        await ctx.send("Are you sure you want to remove the file. Please remember to unload if the file is and existing cog.\n(y/n)")
+        def mcheck(message):
+            if message.author == ctx.author:
+                return True
+            return False
+        try:    
+            answer = await self.bot.wait_for('message', timeout=20, check=mcheck)
+        except asyncio.TimeoutError:
+            return await ctx.send("You didn't respond in time")
+        if answer.content == "y":
+            pass
+        else:
+            return await ctx.send("As you wish, the file will not be removed")
+        try:    
+            default.delete(file_name_with_path)
+            await ctx.send(f"Removed {file_name_with_path}")
+        except Exception as e:
+            await ctx.send(e)
 
 def setup(bot):
     bot.add_cog(admin(bot))
