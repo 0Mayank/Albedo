@@ -7,6 +7,7 @@ from discord.ext import commands
 from discord.ext.commands import errors
 from my_utils import default
 from my_utils.guildstate import state_instance
+from my_utils.permissions import has_permissions
 
 
 class events(commands.Cog):

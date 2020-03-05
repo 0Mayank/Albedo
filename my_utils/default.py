@@ -115,7 +115,32 @@ def delete(file, jsonFile = None, keyName = None):
         data[keyName].remove(file)
         save(jsonFile, data)
 
-def format_seconds(time_seconds):
+def add_zero(var):
+    if var < 10:
+            return f"0{var}"
+
+def implement_numeral(number):
+    count = 0
+    suffixes = {0: "", 1: "k", 2: "m", 3: "b", 4: "t"}
+    formatted = ""
+    def process(number):
+        nonlocal count
+        nonlocal formatted   
+        if number > 99:
+            number = number/1000
+            number = round(number, 1)
+            count += 1
+            if number > 99:
+                process(number)
+            elif number < 99:
+                formatted = f"{number}{suffixes[count]}"
+        else:
+            formatted = f"{number}{suffixes[count]}"
+    
+    process(number)
+    return formatted
+
+def format_seconds(time_seconds, output_type=0):
     """Formats some number of seconds into a string of format d days, x hours, y minutes, z seconds"""
     seconds = time_seconds
     hours = 0
@@ -132,14 +157,40 @@ def format_seconds(time_seconds):
             seconds -= 60
             minutes += 1
     seconds = int(seconds)
-    if days != 0:
-        return f"{days}d {hours}h {minutes}m {seconds}s"
-    elif hours != 0:
-        return f"{hours}h {minutes}m {seconds}s"
-    elif minutes != 0:
-        return f"{minutes}m {seconds}s"
+    if output_type == 0:
+        if days != 0:
+            return f"{days}d {hours}h {minutes}m {seconds}s"
+        elif hours != 0:
+            return f"{hours}h {minutes}m {seconds}s"
+        elif minutes != 0:
+            return f"{minutes}m {seconds}s"
+        else:
+            return f"{seconds}s"
     else:
-        return f"{seconds}s"
+        seconds = add_zero(seconds)
+        if days != 0:
+            hours = add_zero(hours)
+            minutes = add_zero(minutes)
+            return f"{days}:{hours}:{minutes}:{seconds}"
+        elif hours != 0:
+            minutes = add_zero(minutes)
+            return f"{hours}:{minutes}:{seconds}"
+        elif minutes != 0:
+            return f"{minutes}:{seconds}"
+        else:
+            return f"0:{seconds}"
+
+def to_seconds(time):
+    try:    
+        components = time.split(":")
+        seconds = 0
+        for index, value in enumerate(components[::-1]):
+            seconds += int(value)*(60**index)
+        if seconds < 0:
+            return False    
+        return seconds
+    except:
+        return False
 
 def check_availabilty(ctx):
     state = state_instance.get_state(ctx.guild)

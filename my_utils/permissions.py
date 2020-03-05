@@ -28,9 +28,9 @@ async def check_priv(ctx, member):
     try:
         # Self checks
         if member == ctx.author:
-            return await ctx.send(f"You can't {ctx.command.name} yourself")
+            return await ctx.send(f"You can't {ctx.command.name} yourself, although I want to")
         if member.id == ctx.bot.user.id:
-            return await ctx.send("So that's what you think of me huh..? sad ;-;")
+            return await ctx.send("So that's what you think of me huh..? You pathetic humans")
 
         # Check if user bypasses
         if ctx.author.id == ctx.guild.owner.id:
@@ -39,17 +39,17 @@ async def check_priv(ctx, member):
         # Now permission check
         if member.id in almins:
             if ctx.author.id not in almins:
-                return await ctx.send(f"You dare {ctx.command.name} my Ainz Samas (●'◡'●)")
+                return await ctx.send(f"You dare {ctx.command.name} my lords (●'◡'●)")
             else:
-                pass
+                return await ctx.send(f"I am sorry, but i cannot betray either of my lords")
         if member.id == ctx.guild.owner.id:
-            return await ctx.send(f"You can't {ctx.command.name} the owner, lol")
+            return await ctx.send(f"Even if i tried, i will not be able to {ctx.command.name} the server owner, sed")
         if ctx.author.top_role == member.top_role:
             return await ctx.send(f"You can't {ctx.command.name} someone who has the same permissions as you...")
         if ctx.author.top_role < member.top_role:
             return await ctx.send(f"Nope, you can't {ctx.command.name} someone higher than yourself.")
     except Exception:
-        pass
+        return "sad"
 
 
 def can_send(ctx):

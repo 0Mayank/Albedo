@@ -3,12 +3,13 @@ import re
 from datetime import datetime, timedelta
 import io
 import urllib
+import os
 
 import discord
 import requests
 from dateutil.parser import parse
 from discord.ext import commands, tasks
-from PIL import Image, ImageDraw, ImageFont, ImageOps, ImageTk
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 from my_utils import default as d, permissions
 
@@ -80,7 +81,9 @@ class levels(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        
+        if message.author.bot:
+            return
+
         exp = random.randint(15, 25)
         levels = d.retrieve("levels.json")
         
@@ -170,25 +173,32 @@ class levels(commands.Cog):
     @customize.command(aliases = ["bn"])
     async def banner(self, ctx, color = None):
         _initialise(str(ctx.author.id), False)
-        
+        ind = _get_index(str(ctx.author.id))
+        banner = _get_color(ind, "banner")
         if color != None:
             color = color.strip('<>')
-            try:
-                Image.new("RGB", (700, 1100), color = color)
-            except ValueError:
-                try:
-                    response = requests.get(color)
-                    Image.open(io.BytesIO(response.content))
-                except:
-                    return await ctx.send("Invalid colors, baka")
+            if color == banner:
+                pass
             else:
-                return await ctx.send("wtf")
+                try:
+                    Image.new("RGB", (700, 1100), color = color)
+                except ValueError:
+                    try:
+                        response = requests.get(color)
+                        if response.content == None:
+                            return await ctx.send("The url doesn't contain an image. Send a valid image url")
+                        with open(f"banners/{ctx.author.id}", "wb") as f:
+                            f.write(response.content)
+                        color = f"{ctx.author.id}"
+                    except:
+                        return await ctx.send("Invalid colors, baka")
         else:
             if len(ctx.message.attachments) == 1:
-                color = ctx.message.attachments[0].url
+                await ctx.message.attachments[0].save(f"banners\{ctx.author.id}")
+                color = f"{ctx.author.id}"
             else:
-                return await ctx.send("PrTeNdEd To CHaNge ThE ColOR")
-        
+                return await ctx.send("Atleast provide an attachment")
+    
         ind = _get_index(str(ctx.author.id))
         _change_color(ind, color, "banner")
         await ctx.send(f"Banner color changed to `{color}`")
@@ -298,18 +308,30 @@ class levels(commands.Cog):
         member_rank = _get_rank(str(ctx.guild.id), str(member.id))
         if member_rank == False:
             return await ctx.send(f"**{member.name}** has not messaged yet, so their profile doesn't exist.")
+        
         member_total_exp = _get_total_exp(str(ctx.guild.id), str(member.id))
         member_current_exp = _get_current_exp(str(ctx.guild.id), str(member.id))
         member_level = _get_level(str(ctx.guild.id), str(member.id)) 
         exp_for_levelup = 50*member_level**2 + 50*member_level + 100
         arc_end = (member_current_exp/exp_for_levelup)*360 - 90
         bgc = _get_color(ind, "bg color")
-        bannerc = _get_color(ind, "banner")
+        banner_id = _get_color(ind, "banner") 
         numberc = _get_color(ind, "number color")
         textc = _get_color(ind, "text color")
         arcc = _get_color(ind, "arc color")
         rankerc = _get_color(ind, "ranker color")
         arcpathc = _get_color(ind, "arc path color")
+
+        # PROCESSING THE VARIABLES
+        for image in os.listdir('banners'):     # process the banner of the user based on the color, url or the downloaded file
+            if str(banner_id) == image.split(".")[0]:
+                bannerc = image
+                break
+            else:
+                bannerc = banner_id
+
+        member_total_exp = d.implement_numeral(member_total_exp)    #Adds, k, m, etc.
+
 
         try:
         # LOADING THE AVATAR AND BANNER            
@@ -319,9 +341,13 @@ class levels(commands.Cog):
             try:
                 banner = Image.new("RGB", (700, 280), color = bannerc)
             except:
-                response = requests.get(bannerc)
-                banner = Image.open(io.BytesIO(response.content))
-                banner = banner.resize((700, 280))
+                try:    
+                    response = requests.get(bannerc)
+                    banner = Image.open(io.BytesIO(response.content))
+                except:
+                    banner = Image.open(f"banners\{bannerc}")
+            
+            banner = banner.resize((700, 280))
 
         # MASK FOR AVATAR
 
@@ -360,7 +386,6 @@ class levels(commands.Cog):
             small_circle_img.putalpha(mask2)
 
         # TEXT
-
             text = str(member)
             font_size = 70
             font = ImageFont.truetype('fonts/monofonto.ttf', font_size)
@@ -372,9 +397,10 @@ class levels(commands.Cog):
             font2 = ImageFont.truetype('fonts/soloist1.ttf', font_size2)
             rank_draw = ImageDraw.Draw(background)
         # MAIN TEXT
-            font_size3 = 100
-            font3 = ImageFont.truetype('fonts/Fragmentcore.ttf', font_size3)
+            font_size3 = 90
+            # font3 = ImageFont.truetype('fonts/Fragmentcore.ttf', font_size3)
             number_draw = ImageDraw.Draw(background)
+            font3 = ImageFont.truetype('fonts/NewAthleticM54-31vz.ttf', font_size3)
         # TOP LEFT RANK
             font_size4 = 130
             font4 = ImageFont.truetype('fonts/ROBOTECH_GP.ttf', font_size4)
@@ -412,11 +438,12 @@ class levels(commands.Cog):
             rnw = font3.getsize(str(member_rank))[0]
             lnw = font3.getsize(str(member_level))[0]
             enw = font3.getsize(str(member_total_exp))[0]
-            number_draw.text(((700-rnw)/2, 840), str(member_rank), font=font3, fill=numberc)
-            number_draw.text(((540-lnw)/4, 565), str(member_level), font=font3, fill=numberc)
+            number_draw.text(((700-rnw)/2, 840), str(d.implement_numeral(member_rank)), font=font3, fill=numberc)
+            number_draw.text(((540-lnw)/4, 565), str(d.implement_numeral(member_level)), font=font3, fill=numberc)
             number_draw.text((3*(750-enw)/4, 565), str(member_total_exp), font=font3, fill=numberc)
 
-            ranker.text((30,0), f"#{str(member_rank)}", font=font4, fill=rankerc)
+            if member_rank < 10:    
+                ranker.text((30,0), f"#{str(member_rank)}", font=font4, fill=rankerc)
             background.save('overlap.png')
             d.save("profile.json", profiles)
             await ctx.send(file=discord.File('overlap.png'))

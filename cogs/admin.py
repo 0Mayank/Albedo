@@ -228,7 +228,12 @@ class admin(commands.Cog):
     @commands.check(permissions.is_owner)
     async def add(self, ctx, location = ""):
         if len(ctx.message.attachments) == 1 and location != "":
-            await ctx.message.attachments[0].save(f"{location}\{ctx.message.attachments[0].filename}")
+            try:
+                await ctx.message.attachments[0].save(f"{location}\{ctx.message.attachments[0].filename}")
+            except FileNotFoundError:
+                await ctx.send("Directory not found. Creating directory...")
+                os.makedirs(location)
+                await ctx.message.attachments[0].save(f"{location}\{ctx.message.attachments[0].filename}")
         elif len(ctx.message.attachments) == 1 and location == "":
             await ctx.message.attachments[0].save(f"{ctx.message.attachments[0].filename}")
         else:

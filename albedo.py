@@ -9,7 +9,6 @@ from my_utils.guildstate import state_instance
 
 config = u.get("config.json")
 
-offByDefault = ['debugmode.py', 'memberlog.py']
 command_prefix = u.all_cases(config.prefix)
 
 def get_prefix(bot, message):
@@ -24,7 +23,7 @@ bot = Bot(
 )
 
 for filename in os.listdir('cogs'):                                   #Loads all the cogs                  
-    if filename.endswith('.py') and filename not in offByDefault:
+    if filename.endswith('.py') and filename not in config.off_by_default:
         bot.load_extension(f'cogs.{filename[:-3]}')
 
 bot.run (config.token[1])
