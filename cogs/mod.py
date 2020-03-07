@@ -48,11 +48,11 @@ class mod(commands.Cog):
     @commands.command(hidden = False)
     @permissions.has_permissions(perms="ban_members")
     @commands.guild_only()
-    async def unban(self, ctx, *, member):
+    async def unban(self, ctx: commands.Context, member):
         """Unban the user(provide the complete username and discriminator), requires you to have ban members permission"""
-        banned_users = await ctx.guild.ban()
+        banned_users = await ctx.guild.bans()
         name, discriminator = member.split('#')
-        for ban_entry in banned_users():
+        for ban_entry in banned_users:
             user = ban_entry.user
             if (user.name, user.discriminator) == (name, discriminator):
                 await ctx.guild.unban(user)

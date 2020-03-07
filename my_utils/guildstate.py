@@ -21,7 +21,7 @@ class _states:
 
 class GuildState:
     ''' This class manages per-guild states '''
-    __slots__ = ('server', 'roles', 'volume', 'playlist', 'skip_votes', 'now_playing', 'loop', 'temp', 'loopall', 'prefix', 'mute_exists', 'debugmode', 'desc')
+    __slots__ = ('server', 'roles', 'prefix', 'mute_exists', 'debugmode', 'desc')
     def __init__(self, server):
         self.server = server
         self.roles = server.roles 
@@ -31,8 +31,11 @@ class GuildState:
         self.desc = True
 
     def get_var(self, variable):
-        var = getattr(self, variable)
-        return var
+        try:    
+            var = getattr(self, variable)
+            return var
+        except:
+            return True
     
     def set_var(self, variable, value):
         setattr(self, variable, value)

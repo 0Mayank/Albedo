@@ -1,6 +1,6 @@
 import discord
 
-from my_utils import permissions
+from my_utils import permissions, default as d
 from discord.ext.commands import AutoShardedBot, DefaultHelpCommand
 import os
 
@@ -10,10 +10,10 @@ class Bot(AutoShardedBot):
     def __init__(self, *args, prefix=None, **kwargs):
         super().__init__(*args, **kwargs)
 
-    async def on_message(self, msg):
+    async def on_message(self, msg: discord.Message):
         if not self.is_ready() or msg.author.bot or not permissions.can_send(msg):
             return
-
+        
         await self.process_commands(msg)
 
 

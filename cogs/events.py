@@ -1,10 +1,13 @@
+import logging
+import os
+import traceback
+from datetime import datetime
+
 import discord
 import psutil
-import os
-
-from datetime import datetime
 from discord.ext import commands
 from discord.ext.commands import errors
+
 from my_utils import default
 from my_utils.guildstate import state_instance
 from my_utils.permissions import has_permissions
@@ -18,6 +21,9 @@ class events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, err):
+        if hasattr(ctx.command, "on_error"):
+            return  # Don't interfere with custom error handlers
+        
         gstate = state_instance.get_state(ctx.guild)
         
         if isinstance(err, errors.MissingRequiredArgument) or isinstance(err, errors.BadArgument):
@@ -34,6 +40,8 @@ class events(commands.Cog):
                 )
 
             await ctx.send(f"There was an error processing the command ;-;\n{error}")
+            logging.error("Ignoring exception in command {}:".format(ctx.command))
+            logging.error("\n" + "".join(traceback.format_exception(type(error), error, err.__traceback__)))
 
         elif isinstance(err, errors.CheckFailure):
             pass
@@ -52,6 +60,9 @@ class events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
+        
+        state_instance.get_state(guild)
+
         if not self.config.join_message:
             return
 
@@ -61,8 +72,6 @@ class events(commands.Cog):
             pass
         else:
             await to_send.send(self.config.join_message)
-        
-        state_instance.get_state(guild)
     
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
@@ -102,7 +111,7 @@ class events(commands.Cog):
             status=status_type
         )
         print("ready")
-
+        logging.info(f"Logged in as {self.bot.user.name}")
         print(f'{self.bot.user} is in service| Servers: {len(self.bot.guilds)}')
 
 

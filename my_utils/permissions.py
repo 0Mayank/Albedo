@@ -6,8 +6,11 @@ from discord.ext import commands
 almins = default.get("config.json").almins
 
 
-def is_owner(ctx):
-    return ctx.author.id in almins
+def is_owner(ctx = None, user =  None):
+    if user == None:
+        return ctx.author.id in almins
+    elif ctx == None:   
+        return user.id in almins
 
 
 async def check_permissions(ctx, perms, *, check=all):
@@ -34,7 +37,7 @@ async def check_priv(ctx, member):
 
         # Check if user bypasses
         if ctx.author.id == ctx.guild.owner.id:
-            return False
+            return None
 
         # Now permission check
         if member.id in almins:
@@ -49,7 +52,7 @@ async def check_priv(ctx, member):
         if ctx.author.top_role < member.top_role:
             return await ctx.send(f"Nope, you can't {ctx.command.name} someone higher than yourself.")
     except Exception:
-        return "sad"
+        return None
 
 
 def can_send(ctx):

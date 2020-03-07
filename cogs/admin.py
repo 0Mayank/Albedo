@@ -238,6 +238,7 @@ class admin(commands.Cog):
             await ctx.message.attachments[0].save(f"{ctx.message.attachments[0].filename}")
         else:
             return await ctx.send("Provide a file as an attachment")
+        await ctx.message.delete(delay=1)
         return await ctx.send(f"The {ctx.message.attachments[0].filename} has been added")
     
     @fil.group()
@@ -261,6 +262,7 @@ class admin(commands.Cog):
             await ctx.send(f"Removed {file_name_with_path}")
         except Exception as e:
             await ctx.send(e)
+        await ctx.message.delete(delay=1)
 
 def setup(bot):
     bot.add_cog(admin(bot))

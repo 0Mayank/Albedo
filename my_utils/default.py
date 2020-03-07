@@ -118,6 +118,8 @@ def delete(file, jsonFile = None, keyName = None):
 def add_zero(var):
     if var < 10:
             return f"0{var}"
+    else:
+        return var
 
 def implement_numeral(number):
     count = 0
@@ -194,5 +196,5 @@ def to_seconds(time):
 
 def check_availabilty(ctx):
     state = state_instance.get_state(ctx.guild)
-    availability = state.get_var(ctx.command.name)
+    availability = state.get_var(ctx.invoked_with)
     return availability

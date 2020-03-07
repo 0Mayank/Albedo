@@ -4,6 +4,7 @@ import asyncio
 import youtube_dl
 import logging
 import math
+import random
 from urllib import request
 from my_utils.video import Video
 from my_utils import permissions
@@ -70,12 +71,29 @@ class music(commands.Cog):
         state.loop = False
         state.loop_queue = False
         if client and client.channel:
-            await client.disconnect()
+            asyncio.run_coroutine_threadsafe(client.disconnect(),self.bot.loop)
             state.playlist = []
             state.now_playing = None
+            state.last_audio = None
         else:
-            raise commands.CommandError("Not in a voice channel.")
+            await ctx.send("Not in a voice channel")
     
+    @commands.command()
+    @commands.guild_only()
+    @commands.check(audio_playing)
+    @commands.check(in_voice_channel)
+    async def shuffle(self, ctx):
+        """Shuffles the queue"""
+        state = self.get_state(ctx.guild)
+        self._shuffle(state)
+        await ctx.send(self._queue_text(state.playlist))
+
+    def _shuffle(self, state):
+        """Handles the shuffling of queue"""
+        old_queue = state.playlist
+        random.shuffle(old_queue)
+        state.playlist = old_queue
+
     @commands.command()
     @commands.guild_only()
     @commands.check(audio_playing)
@@ -112,11 +130,10 @@ class music(commands.Cog):
         else:
             client.pause()
 
-    @commands.group(aliases=["lp"], invoke_without_command = True)
+    @commands.group(aliases=["repeat"], invoke_without_command = True)
     @commands.guild_only()
     @commands.check(audio_playing)
     @commands.check(in_voice_channel)
-    @commands.check(is_audio_requester)
     async def loop(self, ctx):
         """loops any currently playing audio."""
 
@@ -133,6 +150,16 @@ class music(commands.Cog):
         state.loop_queue = True
         await ctx.send("Looping the queue")
 
+    @loop.command()
+    async def off(self, ctx):
+        """Disable looping of any type"""
+
+        state = self.get_state(ctx.guild)
+
+        state.loop = False
+        state.loop_queue = False
+        await ctx.send("Looping Disabeld")
+
     def _loop(self, ctx):
         state = self.get_state(ctx.guild)
         reply = ""
@@ -143,7 +170,7 @@ class music(commands.Cog):
         elif state.loop == True or state.loop_queue == True:
             state.loop = False
             state.loop_queue = False
-            reply = "Loop disabled"
+            reply = "Looping disabled"
         
         return reply
 
@@ -205,12 +232,9 @@ class music(commands.Cog):
         logging.info(f"{member.name} votes to skip")
         state = self.get_state(channel.guild)
         state.skip_votes.add(member)
-        users_in_channel = len([
-            member for member in channel.members if not member.bot
-        ])  # don't count bots
-        if (float(len(state.skip_votes)) /
-                users_in_channel) >= self.config["vote_skip_ratio"]:
-            # enough members have voted to skip, so skip the song
+        users_in_channel = len([member for member in channel.members if not member.bot]) # don't count bots
+        
+        if (float(len(state.skip_votes))/users_in_channel) >= self.config["vote_skip_ratio"]:  # enough members have voted to skip, so skip the song
             logging.info(f"Enough votes, skipping...")
             state.loop = False
             state.loop_queue = False
@@ -228,10 +252,18 @@ class music(commands.Cog):
             if state.loop == True:
                 self._play_song(client, state, state.now_playing)
             elif state.loop_queue == True:
+                if state.last_audio == state.playlist[0]:
+                    state.last_audio = None
+                else:
+                    state.last_audio = state.now_playing
                 next_song = state.playlist.pop(0)
-                state.playlist.append(next_song)
+                state.playlist.append(state.now_playing)
                 self._play_song(client, state, next_song)
             elif len(state.playlist) > 0:
+                if state.last_audio == state.playlist[0]:
+                    state.last_audio = None
+                else:
+                    state.last_audio = state.now_playing
                 next_song = state.playlist.pop(0)
                 self._play_song(client, state, next_song)
             else:
@@ -283,6 +315,7 @@ class music(commands.Cog):
     # @permissions.has_permissions(perms = "administrator")                  #! decide if this should be uncommented
     async def jumpqueue(self, ctx, song: int, new_index: int):
         """Moves song at an index to a new index in queue."""
+        
         state = self.get_state(ctx.guild)  # get state for this guild
         if 1 <= song <= len(state.playlist) and 1 <= new_index:
             song = state.playlist.pop(song-1)  # take song at index...
@@ -290,7 +323,7 @@ class music(commands.Cog):
 
             await ctx.send(self._queue_text(state.playlist))
         else:
-            raise commands.CommandError("You must use a valid index.")
+            await ctx.send("You must use a valid index.")
     
     @commands.command()
     @commands.guild_only()
@@ -322,12 +355,13 @@ class music(commands.Cog):
                 try:
                     video = Video(url, ctx.author)
                 except youtube_dl.DownloadError as e:
+                    logging.warn(f"Error downloading video: {e}")
                     print(f"Error downloading video: {e}")
                     await ctx.send(
                         "There was an error downloading your video, sorry.")
                     return
                 state.playlist.append(video)
-                message = await ctx.send("Added to queue.", embed=video.get_embed())
+                message = await ctx.send(f"Added to queue at index {len(state.playlist)}", embed=video.get_embed())
                 await self._add_reaction_controls(message)
         else:
             if ctx.author.voice != None and ctx.author.voice.channel != None:
@@ -336,6 +370,7 @@ class music(commands.Cog):
                     try:
                         video = Video(url, ctx.author)
                     except youtube_dl.DownloadError as e:
+                        logging.warn(f"Error downloading video: {e}")
                         await ctx.send(
                             "There was an error downloading your video, sorry.")
                         return
@@ -344,70 +379,115 @@ class music(commands.Cog):
                     message = await ctx.send("", embed=video.get_embed())
                     await self._add_reaction_controls(message)
             else:
-                raise commands.CommandError(
-                    "You need to be in a voice channel to do that.")
+                await ctx.send("Are you just stupid or retarded, which vc am i supposed to join if you are not even in one")
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         """Respods to reactions added to the bot's messages, allowing reactions to control playback."""
         message = reaction.message
-        ctx = await self.bot.get_context(message)
+        
         if user != self.bot.user and message.author == self.bot.user:
             await message.remove_reaction(reaction, user)
+            
             if message.guild and message.guild.voice_client:
                 user_in_channel = user.voice and user.voice.channel and user.voice.channel == message.guild.voice_client.channel
                 guild = message.guild
+                perms = message.channel.permissions_for(user)
                 state = self.get_state(guild)
-                if await permissions.check_permissions(ctx, {"perms": "administrator"}) or (user_in_channel and state.is_requester(user)):
+                
+                if perms.administrator or (user_in_channel and state.is_requester(user)) or permissions.is_owner(user=user):
                     client = message.guild.voice_client
+                    
                     if reaction.emoji == "⏯":
                         # pause audio
                         self._pause_audio(client)
+                    
                     elif reaction.emoji == "⏭":
                         # skip audio
                         state.loop = False
                         state.loop_queue = False
                         client.stop()
+                    
                     elif reaction.emoji == "⏮":
-                        
-                        if state.loop == True:
+                        if state.last_audio == None:    # if its the first song, restart it
+                            if state.loop == True:
+                                client.stop()
+                            else:
+                                state.playlist.insert(0, state.now_playing)  # insert current song at beginning of playlist
+                                client.stop()
+                        else:                           # else play the last audio
+                            state.loop = False
+                            state.playlist.insert(0, state.last_audio)
+                            state.playlist.insert(1, state.now_playing)  # insert current song at beginning of playlist
                             client.stop()
+
+                    elif reaction.emoji == "⏹":
+                        # disconnect bot
+                        asyncio.run_coroutine_threadsafe(client.disconnect(),self.bot.loop)
+                        state.playlist = []
+                        state.now_playing = None
+                        state.last_audio = None
+                    
+                    elif reaction.emoji == "🔁":
+                        # loop/repeat the current audio or queue
+                        if state.loop == True:
+                            state.loop, state.loop_queue = False, True
+                            await message.channel.send("Looping the queue")
+                        elif state.loop_queue == True:
+                            state.loop_queue = False
+                            await message.channel.send("Looping disabled")
                         else:
                             state.loop = True
-                            client.stop()
-                            state.loop = False
-                            
-                elif reaction.emoji == "⏭" and self.config["vote_skip"] and user_in_channel and message.guild.voice_client and message.guild.voice_client.channel:
-                    # ensure that skip was pressed, that vote skipping is enabled, the user is in the channel, and that the bot is in a voice channel
+                            await message.channel.send("Looping current audio")
+
+                    elif reaction.emoji == "🔀":
+                        # shuffle the queue
+                        self._shuffle(state)
+ 
+                elif user_in_channel and message.guild.voice_client and message.guild.voice_client.channel:
+                    # ensure that the user is in the channel, and that the bot is in a voice channel
                     voice_channel = message.guild.voice_client.channel
-                    self._vote_skip(voice_channel, user)
-                    # announce vote
-                    channel = message.channel
-                    users_in_channel = len([
-                        member for member in voice_channel.members
-                        if not member.bot
-                    ])  # don't count bots
-                    required_votes = math.ceil(
-                        self.config["vote_skip_ratio"] * users_in_channel)
-                    await channel.send(
-                        f"{user.mention} voted to skip ({len(state.skip_votes)}/{required_votes} votes)"
-                    )
+                    if reaction.emoji == "⏭" and self.config["vote_skip"]:
+                        # ensure that skip was pressed, that vote skipping is enabled
+                        self._vote_skip(voice_channel, user)
+                        # announce vote
+                        channel = message.channel
+                        users_in_channel = len([member for member in voice_channel.members if not member.bot])  # don't count bots
+                        required_votes = math.ceil(self.config["vote_skip_ratio"] * users_in_channel)
+                        await channel.send( f"{user.mention} voted to skip ({len(state.skip_votes)}/{required_votes} votes)")
+                    
+                    elif reaction.emoji == "🔁":
+                        # loop/repeat the current audio or queue
+                        if state.loop == True:
+                            state.loop, state.loop_queue = False, True
+                            await message.channel.send("Looping the queue")
+                        elif state.loop_queue == True:
+                            state.loop_queue = False
+                            await message.channel.send("Looping disabled")
+                        else:
+                            state.loop = True
+                            await message.channel.send("Looping current audio")
+
+                    elif reaction.emoji == "🔀":
+                        # shuffle the queue
+                        self._shuffle(state)
 
     async def _add_reaction_controls(self, message):
         """Adds a 'control-panel' of reactions to a message that can be used to control the bot."""
-        CONTROLS = ["⏮", "⏯", "⏭"]
+        CONTROLS = ["⏹","⏮", "⏯", "⏭","🔁","🔀"]
         for control in CONTROLS:
             await message.add_reaction(control)
 
 
 class GuildState:
     """Helper class managing per-guild state."""
-
+    __slots__=('volume', 'playlist', 'skip_votes', 'now_playing', 'loop', 'loop_queue', 'last_audio')
     def __init__(self):
-        self.volume = 1.0
+        self.volume = 1.00
         self.playlist = []
         self.skip_votes = set()
         self.now_playing = None
+        self.last_audio = None
         self.loop = False
         self.loop_queue = False
 

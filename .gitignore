@@ -22,6 +22,7 @@ noticeme.gif
 output.png
 overlap.png
 image.py
+albedo.log
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
