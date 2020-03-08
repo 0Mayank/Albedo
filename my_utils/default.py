@@ -194,7 +194,4 @@ def to_seconds(time):
     except:
         return False
 
-def check_availabilty(ctx):
-    state = state_instance.get_state(ctx.guild)
-    availability = state.get_var(ctx.invoked_with)
-    return availability
+

@@ -4,24 +4,33 @@ import logging
 import discord
 from discord.ext import commands
 
-from my_utils import default as u
+from my_utils.default import all_cases, get
 from my_utils.data import Bot, HelpCommand
 from my_utils.guildstate import state_instance
 
-config = u.get("config.json")
+config = get("config.json")
 
-command_prefix = u.all_cases(config.prefix)
+command_prefix = all_cases(config.prefix)
 
 def get_prefix(bot, message):
-    gstate = state_instance.get_state(message.guild)
-    return command_prefix + u.all_cases(gstate.prefix) 
+    gstate = state_instance.get_state(message.guild.id)
+    return command_prefix + all_cases(gstate.prefix) 
 
-bot = Bot(
+bot = commands.Bot(
     command_prefix=get_prefix,
-    prefix=get_prefix,
+    case_insensitive=False,
     command_attrs=dict(hidden=True),
     help_command=HelpCommand()
 )
+@bot.check
+def check_availabilty(ctx):
+    cmd = ctx.command
+    
+    state = state_instance.get_state(ctx.guild.id)
+    if cmd.root_parent:
+        cmd = cmd.root_parent 
+    availability = state.get_var(str(cmd))
+    return availability
 
 for filename in os.listdir('cogs'):                                   #Loads all the cogs                  
     if filename.endswith('.py') and filename not in config.off_by_default:

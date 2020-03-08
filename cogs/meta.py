@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands, tasks
 from discord.utils import oauth_url
 
-from my_utils import default as d
+from my_utils import default as d, permissions
 from my_utils.guildstate import state_instance
 
 config = d.get("config.json")
@@ -18,11 +18,12 @@ class meta(commands.Cog):
         self.bot = bot
     
     @commands.command()
+    @permissions.has_permissions(perms = "administrator")
     async def prefix(self, ctx, *, prefix = None):
         """Gets the current prefix or changes the prefix"""
 
         embed = discord.Embed(color = discord.Colour.from_rgb(0, 0, 0), timestamp = ctx.message.created_at)
-        state = state_instance.get_state(ctx.guild)
+        state = state_instance.get_state(ctx.guild.id)
         if prefix == None:
                 embed.add_field(name="Current Prefix", value=f"Current prefix `{state.prefix}`", inline=False)
                 embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
@@ -31,7 +32,7 @@ class meta(commands.Cog):
                 state.prefix = prefix
                 embed.add_field(name="Prefix", value=f"Prefix changed to `{state.prefix}`", inline=False)
                 embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
-                print("prefix changed to {} in {}".format(prefix,ctx.guild))
+                print("prefix changed to {} in {}".format(prefix,ctx.guild.id))
             else:
                 embed = discord.Embed(title="You thought you could do that, how gae.", timestamp = ctx.message.created_at)
     
@@ -49,35 +50,43 @@ class meta(commands.Cog):
         embed.add_field(name="Bot ping",value=f"{round(self.bot.latency*1000)}ms")
         await ctx.send(embed=embed)
 
-    @commands.command()
-    @commands.check(d.check_availabilty)                                                       #Description command
+    @commands.command()                                                      #Description command
     async def desc(self, ctx, *, random_stuff = None):
         """Description of the bot."""
 
         await ctx.send(">>> I love Ainz sama")
-    @desc.error
-    async def desc_error(self, ctx):
-        pass
 
     @commands.command()
     async def enable(self, ctx, command):
         """Enables a given command"""
-        try:
-            state = state_instance.get_state(ctx.guild)
-            state.set_var(command, True)
-            await ctx.send(f"enabled {command}")
-        except:
-            await ctx.send(f"No command {command} found")
+        cmd = self.bot.get_command(command)
+        
+        if cmd:
+            if cmd.root_parent:
+                cmd = cmd.root_parent
+                await ctx.send(f"enabled command: {cmd}")
+            else:
+                await ctx.send(f"enabled command: {command}")
+            state = state_instance.get_state(ctx.guild.id)
+            state.set_var(str(cmd), True)
+        else:
+            await ctx.send(f'No command "{command}"" found')
 
     @commands.command()
     async def disable(self, ctx, command):
         """disables a given command"""
-        try:
-            state = state_instance.get_state(ctx.guild)
-            state.set_var(command, False)
-            await ctx.send(f"disabled {command}")
-        except:
-            await ctx.send(f"No command {command} found")
+        cmd = self.bot.get_command(command)
+
+        if cmd:
+            if cmd.root_parent:
+                cmd = cmd.root_parent
+                await ctx.send(f"disabled command: {cmd}")
+            else:
+                await ctx.send(f"disabled command: {command}")
+            state = state_instance.get_state(ctx.guild.id)
+            state.set_var(str(cmd), False)
+        else:
+            await ctx.send(f'No command "{command}"" found')
 
 def setup(bot):
     bot.add_cog(meta(bot))

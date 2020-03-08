@@ -24,7 +24,7 @@ class events(commands.Cog):
         if hasattr(ctx.command, "on_error"):
             return  # Don't interfere with custom error handlers
         
-        gstate = state_instance.get_state(ctx.guild)
+        gstate = state_instance.get_state(ctx.guild.id)
         
         if isinstance(err, errors.MissingRequiredArgument) or isinstance(err, errors.BadArgument):
             helper = str(ctx.invoked_subcommand) if ctx.invoked_subcommand else str(ctx.command)
@@ -61,7 +61,7 @@ class events(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
         
-        state_instance.get_state(guild)
+        state_instance.get_state(guild.id)
 
         if not self.config.join_message:
             return
@@ -75,7 +75,7 @@ class events(commands.Cog):
     
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
-        state_instance.delete_state(guild)
+        state_instance.delete_state(guild.id)
 
     @commands.Cog.listener()
     async def on_command(self, ctx):

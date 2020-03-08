@@ -7,7 +7,7 @@ import os
 from my_utils import permissions
 
 def check_mute(ctx):
-    gstate = state_instance.get_state(ctx.guild)
+    gstate = state_instance.get_state(ctx.guild.id)
     roles = gstate.roles
     for role in roles:
         if role.name == "Muted":
@@ -66,7 +66,7 @@ class mod(commands.Cog):
     async def mute(self, ctx, member: discord.Member):
         """Server mute the mentioned user(only text channels), requires you to have administrator"""
 
-        guild_state = state_instance.get_state(ctx.guild)
+        guild_state = state_instance.get_state(ctx.guild.id)
         text_channels = ctx.guild.text_channels
         mute_role = None
         if await permissions.check_priv(ctx, member) != None:

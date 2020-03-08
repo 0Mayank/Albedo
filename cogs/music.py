@@ -68,15 +68,20 @@ class music(commands.Cog):
         """Leaves the voice channel, if currently in one."""
         client = ctx.guild.voice_client
         state = self.get_state(ctx.guild)
-        state.loop = False
-        state.loop_queue = False
+        
         if client and client.channel:
-            asyncio.run_coroutine_threadsafe(client.disconnect(),self.bot.loop)
-            state.playlist = []
-            state.now_playing = None
-            state.last_audio = None
+            await self._leave(client, state)
         else:
             await ctx.send("Not in a voice channel")
+
+    async def _leave(self, client, state):
+        asyncio.run_coroutine_threadsafe(client.disconnect(),self.bot.loop)
+        state.playlist = []
+        state.vote_skip = set()
+        state.now_playing = None
+        state.last_audio = None
+        state.loop = False
+        state.loop_queue = False
     
     @commands.command()
     @commands.guild_only()
@@ -235,7 +240,6 @@ class music(commands.Cog):
         users_in_channel = len([member for member in channel.members if not member.bot]) # don't count bots
         
         if (float(len(state.skip_votes))/users_in_channel) >= self.config["vote_skip_ratio"]:  # enough members have voted to skip, so skip the song
-            logging.info(f"Enough votes, skipping...")
             state.loop = False
             state.loop_queue = False
             channel.guild.voice_client.stop()
@@ -257,7 +261,8 @@ class music(commands.Cog):
                 else:
                     state.last_audio = state.now_playing
                 next_song = state.playlist.pop(0)
-                state.playlist.append(state.now_playing)
+                if state.last_audio:    
+                    state.playlist.append(state.now_playing)
                 self._play_song(client, state, next_song)
             elif len(state.playlist) > 0:
                 if state.last_audio == state.playlist[0]:
@@ -362,7 +367,7 @@ class music(commands.Cog):
                     return
                 state.playlist.append(video)
                 message = await ctx.send(f"Added to queue at index {len(state.playlist)}", embed=video.get_embed())
-                await self._add_reaction_controls(message)
+            await self._add_reaction_controls(message)
         else:
             if ctx.author.voice != None and ctx.author.voice.channel != None:
                 async with ctx.channel.typing():    
@@ -377,7 +382,7 @@ class music(commands.Cog):
                     client = await channel.connect()
                     self._play_song(client, state, video)
                     message = await ctx.send("", embed=video.get_embed())
-                    await self._add_reaction_controls(message)
+                await self._add_reaction_controls(message)
             else:
                 await ctx.send("Are you just stupid or retarded, which vc am i supposed to join if you are not even in one")
 
@@ -394,9 +399,9 @@ class music(commands.Cog):
                 guild = message.guild
                 perms = message.channel.permissions_for(user)
                 state = self.get_state(guild)
+                client = message.guild.voice_client
                 
-                if perms.administrator or (user_in_channel and state.is_requester(user)) or permissions.is_owner(user=user):
-                    client = message.guild.voice_client
+                if perms.administrator or (user_in_channel and state.is_requester(user)) or permissions.is_owner(user=user):                  
                     
                     if reaction.emoji == "⏯":
                         # pause audio
@@ -423,10 +428,7 @@ class music(commands.Cog):
 
                     elif reaction.emoji == "⏹":
                         # disconnect bot
-                        asyncio.run_coroutine_threadsafe(client.disconnect(),self.bot.loop)
-                        state.playlist = []
-                        state.now_playing = None
-                        state.last_audio = None
+                        self._leave(client, state)
                     
                     elif reaction.emoji == "🔁":
                         # loop/repeat the current audio or queue
@@ -444,9 +446,9 @@ class music(commands.Cog):
                         # shuffle the queue
                         self._shuffle(state)
  
-                elif user_in_channel and message.guild.voice_client and message.guild.voice_client.channel:
+                elif user_in_channel and client and client.channel:
                     # ensure that the user is in the channel, and that the bot is in a voice channel
-                    voice_channel = message.guild.voice_client.channel
+                    voice_channel = client.channel
                     if reaction.emoji == "⏭" and self.config["vote_skip"]:
                         # ensure that skip was pressed, that vote skipping is enabled
                         self._vote_skip(voice_channel, user)
@@ -460,23 +462,60 @@ class music(commands.Cog):
                         # loop/repeat the current audio or queue
                         if state.loop == True:
                             state.loop, state.loop_queue = False, True
-                            await message.channel.send("Looping the queue")
+                            await message.channel.send("Looping the queue", delete_after=2)
                         elif state.loop_queue == True:
                             state.loop_queue = False
-                            await message.channel.send("Looping disabled")
+                            await message.channel.send("Looping disabled", delete_after=2)
                         else:
                             state.loop = True
-                            await message.channel.send("Looping current audio")
+                            await message.channel.send("Looping current audio", delete_after=2)
 
                     elif reaction.emoji == "🔀":
                         # shuffle the queue
                         self._shuffle(state)
+                        await message.channel.send("Shuffled the queue", delete_after=2)
 
     async def _add_reaction_controls(self, message):
         """Adds a 'control-panel' of reactions to a message that can be used to control the bot."""
         CONTROLS = ["⏹","⏮", "⏯", "⏭","🔁","🔀"]
         for control in CONTROLS:
             await message.add_reaction(control)
+    
+    @commands.Cog.listener()
+    async def on_voice_state_update(self, user, before, after):
+        client = user.guild.voice_client
+
+        if not client:
+            return
+
+        state = self.get_state(user.guild)
+        left_channel = before.channel and before.channel == client.channel and before.channel != after.channel or user == self.bot.user and before.channel != after.channel  # check if the member was in the voice channel of client
+        
+        def vcheck(user, before, after):
+            nonlocal client
+            joined_channel = after.channel and after.channel == client.channel and before.channel != client.channel or user == self.bot.user and before.channel != client.channel
+            if joined_channel:
+                return True
+            return False
+            
+
+        if left_channel:
+            users_in_channel = len([member for member in client.channel.members if not member.bot])
+            if users_in_channel == 0:
+                if not client.is_paused():
+                    client.pause()
+
+                try:
+                    user, before, after = await self.bot.wait_for('voice_state_update', timeout=300, check=vcheck)  # checks message reactions
+                except asyncio.TimeoutError:
+                    asyncio.run_coroutine_threadsafe(client.disconnect(),self.bot.loop)
+                    state.playlist = []
+                    state.now_playing = None
+                    state.last_audio = None
+                else:
+                    if client.is_paused():
+                        client.resume()
+
 
 
 class GuildState:

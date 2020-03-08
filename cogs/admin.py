@@ -10,6 +10,7 @@ from io import BytesIO
 
 from discord.ext import commands
 from my_utils import permissions, default, dataIO
+from my_utils.guildstate import state_instance
 
 
 class admin(commands.Cog):
@@ -93,6 +94,7 @@ class admin(commands.Cog):
         """ Reboot the bot """
         await ctx.send('Rebooting now...')
         time.sleep(1)
+        dataIO.backup_states(state_instance)
         self.bot.close()
         sys.exit()
 
@@ -190,6 +192,13 @@ class admin(commands.Cog):
             await ctx.send(err)
         except TypeError:
             await ctx.send("You need to either provide an image URL or upload one with the command")
+
+    @change.command(name="def_prefix")
+    @commands.check(permissions.is_owner)
+    async def change_default_prefix(self, ctx, prefix):
+        """Changes the default premanent prefix"""
+        dataIO.change_value("config.json", "prefix", prefix)
+        await ctx.send(f"Successfully changed default prefix to **{prefix}**")
 
     @commands.command(aliases = ["api_for", "api"])
     @commands.check(permissions.is_owner)
