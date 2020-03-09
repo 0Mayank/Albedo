@@ -7,14 +7,15 @@ import os
 from my_utils import permissions
 
 def check_mute(ctx):
-    gstate = state_instance.get_state(ctx.guild.id)
-    roles = gstate.roles
+    state = state_instance.get_state(ctx.guild.id)
+    roles = ctx.guild.roles
     for role in roles:
         if role.name == "Muted":
-            gstate.mute_exists = True
-            break
+            state.mute_exists = True
+            return True
+    state.mute_exists = False
     return True
-
+            
 class mod(commands.Cog):
     """Bot commands for moderation"""
 
@@ -59,41 +60,44 @@ class mod(commands.Cog):
                 await ctx.send(f">>> Unbanned {user.name}#{user.discriminator}")
                 return
 
-    @commands.command(aliases = ['silent'], hidden = False)
+    @commands.command(aliases = ['silent', "choke"], hidden = False)
     @commands.check(check_mute)
-    @permissions.has_permissions(perms="administrator")
+    @permissions.has_permissions(perms="manage_roles")
     @commands.guild_only()
     async def mute(self, ctx, member: discord.Member):
-        """Server mute the mentioned user(only text channels), requires you to have administrator"""
+        """Server mute the mentioned user(only text channels), requires you to have manage roles permission"""
 
-        guild_state = state_instance.get_state(ctx.guild.id)
+        state = state_instance.get_state(ctx.guild.id)
         text_channels = ctx.guild.text_channels
         mute_role = None
-        if await permissions.check_priv(ctx, member) != None:
+        if not await permissions.check_priv(ctx, member):
             return
-        if guild_state.mute_exists:
+        if state.mute_exists:
             mute_role = get(ctx.guild.roles, name = "Muted")
         else:
             mute_role = await ctx.guild.create_role(name = "Muted")
             for channel in text_channels:
-                await channel.set_permissions(mute_role, send_messages=False, manage_permissions=False, manage_channels=False, manage_webhooks=False)
-            guild_state.mute_exists = True
+                await channel.set_permissions(mute_role, send_messages=False, manage_permissions=False, manage_channels=False, manage_webhooks=False, manage_messages=False)
+            state.mute_exists = True
 
+        for role in member.roles[::-1]:
+            if role.name == "Muted":
+               return await ctx.send(f"{member.name} is already muted")
         await member.add_roles(mute_role)
-        await ctx.send(f"Muted {member.name}")
+        return await ctx.send(f"Muted {member.name}")
     
-    @commands.command(aliases = ['unmut'], hidden = False)
-    @permissions.has_permissions(perms="administrator")
+    @commands.command(aliases = ['unmut', "unchoke"], hidden = False)
+    @permissions.has_permissions(perms="manage_roles")
     @commands.guild_only()
     async def unmute(self, ctx, member: discord.Member):
-        """Unmute the mentioned user, requires you to have administrator"""
-        if await permissions.check_priv(ctx, member) != None:
+        """Unmute the mentioned user, requires you to have manage roles permission"""
+        if not await permissions.check_priv(ctx, member):
             return
         for role in member.roles[::-1]:
             if role.name == "Muted":
-               await ctx.send(f">>> Unmuted f{member.name}")
+               await ctx.send(f"Unmuted {member.name}")
                return await member.remove_roles(role)
-        return await ctx.send(f">>> {member.name} was not even muted")
+        return await ctx.send(f"{member.name} was not even muted")
 
     @commands.command(aliases = ['purge'], hidden = False)   
     @permissions.has_permissions(perms="manage_messages")                            #CLEAR function

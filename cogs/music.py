@@ -255,7 +255,7 @@ class music(commands.Cog):
             
             if state.loop == True:
                 self._play_song(client, state, state.now_playing)
-            elif state.loop_queue == True:
+            elif state.loop_queue == True and len(state.playlist) > 0:
                 if state.last_audio == state.playlist[0]:
                     state.last_audio = None
                 else:

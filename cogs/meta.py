@@ -57,13 +57,22 @@ class meta(commands.Cog):
         await ctx.send(">>> I love Ainz sama")
 
     @commands.command()
+    @permissions.has_permissions(perms = "manage_server")
     async def enable(self, ctx, command):
         """Enables a given command"""
-        cmd = self.bot.get_command(command)
+        if command.lower() == "all":   
+            cmd = "all"
+        else:   
+            cmd = self.bot.get_command(command)
+        
+        try:
+            root = cmd.root_parent
+        except:
+            root = None
         
         if cmd:
-            if cmd.root_parent:
-                cmd = cmd.root_parent
+            if root:
+                cmd = root
                 await ctx.send(f"enabled command: {cmd}")
             else:
                 await ctx.send(f"enabled command: {command}")
@@ -72,14 +81,22 @@ class meta(commands.Cog):
         else:
             await ctx.send(f'No command "{command}"" found')
 
-    @commands.command()
+    @commands.command(perms = "manage_server")
     async def disable(self, ctx, command):
         """disables a given command"""
-        cmd = self.bot.get_command(command)
-
+        if command.lower() == "all":   
+            cmd = "all"
+        else:   
+            cmd = self.bot.get_command(command)
+        
+        try:
+            root = cmd.root_parent
+        except:
+            root = None
+        
         if cmd:
-            if cmd.root_parent:
-                cmd = cmd.root_parent
+            if root:
+                cmd = root
                 await ctx.send(f"disabled command: {cmd}")
             else:
                 await ctx.send(f"disabled command: {command}")

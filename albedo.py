@@ -25,11 +25,13 @@ bot = commands.Bot(
 @bot.check
 def check_availabilty(ctx):
     cmd = ctx.command
+    if str(cmd) == "enable" or str(cmd) == "disable":
+        return True
     
     state = state_instance.get_state(ctx.guild.id)
     if cmd.root_parent:
         cmd = cmd.root_parent 
-    availability = state.get_var(str(cmd))
+    availability = state.get_var(str(cmd)) if state.get_var("all") else False
     return availability
 
 for filename in os.listdir('cogs'):                                   #Loads all the cogs                  

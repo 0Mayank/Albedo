@@ -33,8 +33,8 @@ def recover_states(state_instance):
     try:    
         with open(f"json/states.json") as f:
                 D = json.load(f)
-    except FileNotFoundError:
-        raise FileNotFoundError("The file you tried to get does not exist...")
+    except:
+        return
 
     D = json.loads(D)
     for guild_id, settings in D.get("states").items():
