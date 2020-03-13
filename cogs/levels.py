@@ -143,12 +143,16 @@ class levels(commands.Cog):
 
     @commands.group(aliases = ["c"], invoke_without_command = True)
     async def customize(self, ctx):
+        """Customize your profile"""
+
         _initialise(str(ctx.author.id), False)
 
         await ctx.send("Nope, no category like dat found")
 
     @customize.command()
-    async def arc(self, ctx, color = None):
+    async def arc(self, ctx, color):
+        """Change the color of arc"""
+
         _initialise(str(ctx.author.id), False)
         try:
             Image.new("RGB", (700, 1100), color = color)
@@ -160,7 +164,9 @@ class levels(commands.Cog):
         await ctx.send(f"Arc color changed to `{color}`")
     
     @customize.command(aliases = ["bg"])
-    async def background(self, ctx, color = None):
+    async def background(self, ctx, color):
+        """Change the color of the background"""
+
         _initialise(str(ctx.author.id), False)
         try:
             Image.new("RGB", (700, 1100), color = color)
@@ -170,8 +176,10 @@ class levels(commands.Cog):
         _change_color(ind, color, "bg color")
         await ctx.send(f"Background color changed to `{color}`")
 
-    @customize.command(aliases = ["bn"])
+    @customize.command(aliases = ["bn"], brief="Change the banner", usage="<color|url|attachment>")
     async def banner(self, ctx, color = None):
+        """Change the image or the color of the banner"""
+
         _initialise(str(ctx.author.id), False)
         ind = _get_index(str(ctx.author.id))
         banner = _get_color(ind, "banner")
@@ -204,7 +212,9 @@ class levels(commands.Cog):
         await ctx.send(f"Banner color changed to `{color}`")
 
     @customize.command(aliases = ["tc"])
-    async def textcolor(self, ctx, color = None):
+    async def textcolor(self, ctx, color):
+        """Change the text color"""
+
         _initialise(str(ctx.author.id), False)
         try:
             Image.new("RGB", (700, 1100), color = color)
@@ -215,7 +225,9 @@ class levels(commands.Cog):
         await ctx.send(f"Text color changed to `{color}`")
     
     @customize.command(aliases = ["nc"])
-    async def numbercolor(self, ctx, color = None):
+    async def numbercolor(self, ctx, color):
+        """Change the color of numbers"""
+
         _initialise(str(ctx.author.id))
         try:
             Image.new("RGB", (700, 1100), color = color)
@@ -225,8 +237,10 @@ class levels(commands.Cog):
         _change_color(ind, color, "number color")
         await ctx.send(f"Number color changed to `{color}`")
 
-    @customize.command(aliases = ["rc"])
-    async def rankercolor(self, ctx, color = None):
+    @customize.command(aliases = ["rc"], brief="Change the ranker color")
+    async def rankercolor(self, ctx, color):
+        """Change the ranker color, the number at the top left."""
+
         _initialise(str(ctx.author.id))
         try:
             Image.new("RGB", (700, 1100), color = color)
@@ -236,8 +250,10 @@ class levels(commands.Cog):
         _change_color(ind, color, "ranker color")
         await ctx.send(f"Ranker color changed to `{color}`")
 
-    @customize.command(aliases = ["apc"])
-    async def arcpathcolor(self, ctx, color = None):
+    @customize.command(aliases = ["apc"], brief="Change the arc path color")
+    async def arcpathcolor(self, ctx, color):
+        """Change the color of the path of the arc"""
+
         _initialise(str(ctx.author.id))
         try:
             Image.new("RGB", (700, 1100), color = color)
@@ -247,8 +263,10 @@ class levels(commands.Cog):
         _change_color(ind, color, "arc path color")
         await ctx.send(f"arc path color changed to `{color}`")
 
-    @customize.command()
-    async def mode(self, ctx, mode = None):
+    @customize.command(usage="<light|dark|default>")
+    async def mode(self, ctx, mode):
+        """These are some preset themes for you"""
+
         _initialise(str(ctx.author.id), False)
         ind = _get_index(str(ctx.author.id))
         if mode == "light":    
@@ -279,6 +297,8 @@ class levels(commands.Cog):
     @commands.command()
     @commands.check(permissions.is_owner)
     async def show(self, ctx, member: discord.Member = None):
+        """Shows the profile color set"""
+
         member = ctx.author if not member else member
         _initialise(str(member.id), False)
         ind = _get_index(str(member.id))
@@ -299,6 +319,8 @@ class levels(commands.Cog):
 
     @commands.command(aliases = ["rank"])
     async def profile(self, ctx, member: discord.Member = None):
+        """Shows the profile \-\_\-"""
+
         member = ctx.author if not member else member
         _initialise(str(member.id), False)
         profiles = d.retrieve("profile.json")

@@ -41,7 +41,7 @@ class events(commands.Cog):
 
             await ctx.send(f"There was an error processing the command ;-;\n{error}")
             logging.error("Ignoring exception in command {}:".format(ctx.command))
-            logging.error("\n" + "".join(traceback.format_exception(type(error), error, err.__traceback__)))
+            logging.error("\n" + "".join(traceback.format_exception(type(error), err, err.__traceback__)))
 
         elif isinstance(err, errors.CheckFailure):
             pass
@@ -80,9 +80,9 @@ class events(commands.Cog):
     @commands.Cog.listener()
     async def on_command(self, ctx):
         try:
-            print(f"{ctx.guild.name} > {ctx.author} > {ctx.message.clean_content}")
+            logging.info(f"{ctx.guild.name} > {ctx.author} > {ctx.message.clean_content}")
         except AttributeError:
-            print(f"Private message > {ctx.author} > {ctx.message.clean_content}")
+            logging.info(f"Private message > {ctx.author} > {ctx.message.clean_content}")
 
     @commands.Cog.listener()
     async def on_ready(self):

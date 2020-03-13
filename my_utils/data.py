@@ -31,9 +31,6 @@ class HelpCommand(DefaultHelpCommand):
                     if not permissions.is_owner(ctx):
                         if cog.qualified_name == "admin":
                             continue
-                    commands = ''
-                    for command in mapping[cog]:
-                        commands += f"_{str(command)}_|"
                     embed.add_field(name = "**{}**".format(cog.qualified_name.upper()), value = f"`{self.clean_prefix}help {cog.qualified_name}`\n", inline= False)
 
         await ctx.send(embed = embed)
@@ -42,35 +39,26 @@ class HelpCommand(DefaultHelpCommand):
         ctx = self.context
 
         embed = discord.Embed(
-            title = f"{self.clean_prefix} {str(command)} info", 
-            color = discord.Colour.from_rgb(0,250,141), timestamp = ctx.message.created_at)
+            description=command.help if command.help else "Gonna write dis shit later boya",
+            color=discord.Colour.from_rgb(0,250,141), timestamp = ctx.message.created_at)
 
         signature = self.get_command_signature(command)
-        embed.add_field(name = "Usage", value = "`{}`".format(signature), inline=False)
-
-        try:
-            embed.add_field(name = "Description", value = command.help if command.help else "Gonna write dis shit later boya")
-        except RuntimeError:
-            for line in command.help.splitlines():
-                embed.add_field(name = command, value = line)
+        embed.set_author(name=f"{signature}")
 
         await ctx.send(embed = embed)
 
     async def send_group_help(self, group):
         ctx = self.context
         signature = self.get_command_signature(group)
-        if group.help != None:
-            description = group.help + "\n`{}`".format(signature)
-        else:
-            description = "`{}`".format(signature)
-        embed = discord.Embed(
-            title = str(group).upper(),
-            description = description if group.help else "`{}`".format(signature), 
-            color = discord.Colour.from_rgb(0,250,141), timestamp = ctx.message.created_at)
 
+        embed = discord.Embed(
+            description = group.help if group.help else "", 
+            color = discord.Colour.from_rgb(0,250,141), timestamp = ctx.message.created_at)
+        embed.set_author(name=signature)
         filtered = await self.filter_commands(group.commands, sort=self.sort_commands)
         for command in filtered:
-            embed.add_field(name = f"**{command.name}**", value = "_{}_".format(command.help if command.help else "Crap, forgot to write this shit"), inline=False)
+            halp = command.brief if command.brief else command.help
+            embed.add_field(name = f"**{command.name}**", value = "_{}_".format(halp if halp else "Crap, forgot to write this shit"), inline=False)
 
         await ctx.send(embed = embed)
 
@@ -85,8 +73,10 @@ class HelpCommand(DefaultHelpCommand):
             color = discord.Colour.from_rgb(0,250,141), timestamp = ctx.message.created_at)
 
         filtered = await self.filter_commands(cog.get_commands(), sort=self.sort_commands)
+        
         for command in filtered:
-            embed.add_field(name = f"**{command.name}**", value = "_{}_".format(command.help if command.help else "Crap, forgot to write this shit"), inline=False)
+            halp = command.brief if command.brief else command.help
+            embed.add_field(name = f"**{command.name}**", value = "_{}_".format(halp if halp else "Crap, forgot to write this shit"), inline=False)
 
         return await ctx.send(embed = embed)
 

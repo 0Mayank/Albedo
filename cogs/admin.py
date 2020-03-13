@@ -95,7 +95,7 @@ class admin(commands.Cog):
         await ctx.send('Rebooting now...')
         time.sleep(1)
         dataIO.backup_states(state_instance)
-        self.bot.close()
+        await self.bot.close()
         sys.exit()
 
     @commands.command()

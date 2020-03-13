@@ -1,4 +1,5 @@
 from my_utils.dataIO import recover_states
+from collections import namedtuple
 class _states:
     ''' contains the states for an instance of bot '''
     def __init__(self):
@@ -21,20 +22,28 @@ class _states:
 
 class GuildState:
     ''' This class manages per-guild states '''
+    
     def __init__(self):
-        self.prefix = "/"
+        self.command = namedtuple("command", ["server_wide", "channels", "roles", "forced"])
+        self.bot_prefix = "/"
         self.mute_exists = False
+        self.all = self.command(True, set(),set(), False)
         self.debugmode = False
-        self.desc = True
-        self.ping = False
+        self.desc = self.command(True, set(), set(), False)
+        self.ping = self.command(True, set(), set(), False)
 
     def get_var(self, variable):
         try:    
             var = getattr(self, variable)
             return var
         except:
-            return True
+            return self.command(True, set(),set(), False)
     
+    def get_commands(self):
+        cmds = dir(self)
+        not_cmds = ("command", "bot_prefix", "mute_exists", "get_var", "get_commands", "set_var", "debugmode")
+        return [cmd for cmd in cmds if cmd not in not_cmds and not cmd.startswith("__")]
+
     def set_var(self, variable, value):
         setattr(self, variable, value)
         return

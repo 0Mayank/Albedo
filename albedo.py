@@ -14,7 +14,7 @@ command_prefix = all_cases(config.prefix)
 
 def get_prefix(bot, message):
     gstate = state_instance.get_state(message.guild.id)
-    return command_prefix + all_cases(gstate.prefix) 
+    return command_prefix + all_cases(gstate.bot_prefix) 
 
 bot = commands.Bot(
     command_prefix=get_prefix,
@@ -25,13 +25,29 @@ bot = commands.Bot(
 @bot.check
 def check_availabilty(ctx):
     cmd = ctx.command
-    if str(cmd) == "enable" or str(cmd) == "disable":
-        return True
     
     state = state_instance.get_state(ctx.guild.id)
     if cmd.root_parent:
-        cmd = cmd.root_parent 
-    availability = state.get_var(str(cmd)) if state.get_var("all") else False
+        cmd = cmd.root_parent
+    
+    if str(cmd) == "enable" or str(cmd) == "disable" or str(cmd) == "reboot":
+        return True
+    
+    al = state.get_var("all")
+    comd = state.get_var(str(cmd))
+    tc = ctx.channel
+    rol = ctx.author.top_role
+    
+    if str(tc) in al.channels:
+        return comd.forced
+    if str(rol) in al.roles:
+        return comd.forced
+    if str(tc) in comd.channels:
+        return False
+    if str(rol) in comd.roles:
+        return False
+
+    availability = comd.server_wide if al.server_wide else comd.forced
     return availability
 
 for filename in os.listdir('cogs'):                                   #Loads all the cogs                  

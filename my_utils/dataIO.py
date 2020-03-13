@@ -24,8 +24,18 @@ def append_value(file: str, value: str, addition: str):
     with open(file, "w") as jsonFile:
         json.dump(data, jsonFile, indent=2)
 
+def encode(obj):
+    try:
+        dic = obj.__dict__
+    except AttributeError:
+        if isinstance(obj, set):
+            dic = list(obj)
+        else:
+            dic = ["server_wide", "channels", "roles"]
+    return dic
+
 def backup_states(state_instance):
-    D = json.dumps(state_instance, default=lambda x: x.__dict__)
+    D = json.dumps(state_instance, default=encode)
     with open('json/states.json', "w") as f:
         json.dump(D, f)
 
@@ -40,4 +50,10 @@ def recover_states(state_instance):
     for guild_id, settings in D.get("states").items():
         guild = state_instance.get_state(int(guild_id))
         for setting, value in settings.items():
-            guild.set_var(setting, value)
+            if setting == "bot_prefix" or setting == "mute_exists":    
+                guild.set_var(setting, value)
+            elif setting != "command":
+                value=guild.command(value[0], set(value[1]), set(value[2]), value[3])
+                guild.set_var(setting, value)
+            else:
+                pass
