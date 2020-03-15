@@ -52,7 +52,7 @@ def recover_states(state_instance):
         for setting, value in settings.items():
             if setting == "bot_prefix" or setting == "mute_exists":    
                 guild.set_var(setting, value)
-            elif setting != "command":
+            elif setting != "command" and setting != "debugmode":
                 value=guild.command(value[0], set(value[1]), set(value[2]), value[3])
                 guild.set_var(setting, value)
             else:

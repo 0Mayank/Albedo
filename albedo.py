@@ -60,8 +60,15 @@ def run():
 
 #logging setup
 formatter = logging.Formatter(
-    fmt="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s"
-)
+    fmt="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s")
+
+
+# logger = logging.getLogger('discord')
+# logger.setLevel(logging.DEBUG)
+# handler = logging.FileHandler(filename='albedo.log', encoding='utf-8', mode='w')
+# handler.setFormatter(formatter)
+# logger.addHandler(handler)
+
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 

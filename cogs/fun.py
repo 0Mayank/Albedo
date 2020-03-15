@@ -6,6 +6,7 @@ import urllib
 import aiohttp
 import requests
 import asyncio
+import logging
 
 from io import BytesIO
 from my_utils import lists, permissions, default, argparser
@@ -152,8 +153,8 @@ class fun(commands.Cog):
                     definition += "**"
                 else:
                     definition += value
-            if len(definition) >= 1000:
-                definition = definition[:1000]
+            if len(definition) >= 1500:
+                definition = definition[:1500]
                 definition = definition.rsplit(' ', 1)[0]
                 definition += '...'
             
@@ -237,23 +238,24 @@ class fun(commands.Cog):
 
     @commands.command(aliases=['randomimage','wikihow'])
     async def wiki(self, ctx):
+        try:
+            url = "https://hargrimm-wikihow-v1.p.rapidapi.com/images"
+            querystring = {"count":"1"}
 
-        url = "https://hargrimm-wikihow-v1.p.rapidapi.com/images"
-        querystring = {"count":"1"}
+            headers = {
+                'x-rapidapi-host': "hargrimm-wikihow-v1.p.rapidapi.com",
+                'x-rapidapi-key': "1adab39b32msh3ace9d305db7522p133436jsn292ad15e4db3"
+                }
 
-        headers = {
-            'x-rapidapi-host': "hargrimm-wikihow-v1.p.rapidapi.com",
-            'x-rapidapi-key': "1adab39b32msh3ace9d305db7522p133436jsn292ad15e4db3"
-            }
-
-        response = requests.request("GET", url, headers=headers, params=querystring).json()
-        embed = discord.Embed(
-            color = discord.Colour.from_rgb(0,250,141), timestamp = ctx.message.created_at)
-        embed.set_author(name=f"Totally random wikihow images")
-        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
-        embed.set_image(url=response['1'])
-        await ctx.send(embed=embed)
-
+            response = requests.request("GET", url, headers=headers, params=querystring).json()
+            embed = discord.Embed(
+                color = discord.Colour.from_rgb(0,250,141), timestamp = ctx.message.created_at)
+            embed.set_author(name=f"Totally random wikihow images")
+            embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+            embed.set_image(url=response['1'])
+            await ctx.send(embed=embed)
+        except Exception as e:
+            raise commands.errors.CommandInvokeError(e)
 
 def setup(bot):
     bot.add_cog(fun(bot))

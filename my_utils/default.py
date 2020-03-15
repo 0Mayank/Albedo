@@ -121,6 +121,21 @@ def add_zero(var):
     else:
         return var
 
+async def safe_send(ctx, txt, name):
+    embed = discord.Embed( 
+        color = discord.Colour.from_rgb(0,250,141), timestamp = ctx.message.created_at)
+    embed.set_author(name=name)
+    async def splitter(txt):    
+        if len(txt)>6000:
+            txt2 = txt[:6000]
+            txt2 = txt2.rsplit(' ', 1)[0]
+            embed.description = txt2
+            await ctx.send(embed=embed)
+            if len(txt[6000:])>6000:
+                await splitter(txt)
+    
+
+
 def implement_numeral(number):
     count = 0
     suffixes = {0: "", 1: "k", 2: "m", 3: "b", 4: "t"}

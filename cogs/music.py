@@ -5,10 +5,30 @@ import youtube_dl
 import logging
 import math
 import random
+from collections import namedtuple
+import requests
+from bs4 import BeautifulSoup
 from urllib import request
 from my_utils.video import Video
 from my_utils import permissions
-from my_utils.default import format_seconds, to_seconds
+from my_utils.default import format_seconds, to_seconds, safe_send
+
+
+def get_song(query, item):
+
+    url = "https://genius.p.rapidapi.com/search"
+    song = namedtuple("song", ["title", "path"])
+    querystring = {"q":query}
+    
+    headers = {
+        'x-rapidapi-host': "genius.p.rapidapi.com",
+        'x-rapidapi-key': "1adab39b32msh3ace9d305db7522p133436jsn292ad15e4db3"
+        }
+    
+    response = requests.request("GET", url, headers=headers, params=querystring).json()
+    lyrics = song((response['response']['hits'][item]['result']['full_title']),
+                    str(response['response']['hits'][0]['result']['url'] ))
+    return lyrics
 
 async def audio_playing(ctx):
     """Checks that audio is currently playing before continuing."""
@@ -77,7 +97,7 @@ class music(commands.Cog):
     async def _leave(self, client, state):
         asyncio.run_coroutine_threadsafe(client.disconnect(),self.bot.loop)
         state.playlist = []
-        state.vote_skip = set()
+        state.skip_votes = set()
         state.now_playing = None
         state.last_audio = None
         state.loop = False
@@ -347,15 +367,67 @@ class music(commands.Cog):
         else:
             await ctx.send("You must use a valid index.")
 
+    @commands.command()
+    async def lyrics(self, ctx, *, query:str):
+        async with ctx.channel.typing():
+            txt = "**Please select a track from the following results by responding with `1 - 5`:**\n"
+            max_ind = 0
+            for i in range(5):
+                try: 
+                    txt += f"**{i+1}**. {get_song(query, i).title}\n"
+                    max_ind += 1
+                except IndexError:
+                    break
+            await ctx.send(txt)
+        
+        txt=""
+
+        def mcheck(message):
+            if message.author == ctx.author:
+                return True
+            return False
+        try:    
+            answer = await self.bot.wait_for('message', timeout=20, check=mcheck)
+        except asyncio.TimeoutError:
+            return await ctx.send("You didn't respond in time.")
+        if answer.content.isalpha():
+            return await ctx.send("Respond with a integer")
+        if int(answer.content) <= max_ind and int(answer.content) > 0:
+            async with ctx.channel.typing():    
+                lyric = get_song(query, int(answer.content)-1)
+                #await ctx.send(f"**{lyric.title}**")
+                source = requests.get(lyric.path).text
+                soup = BeautifulSoup(source, 'lxml')
+                tags = soup.find(class_="lyrics")
+                br_tags = tags.text.strip().split('\n\n')
+                for item in range(len(tags)):
+                    bt = br_tags[item]
+                    for chunk in bt:
+                        txt += chunk
+                    # for chunk in [bt[i:i+2000] for i in range(0, len(bt)+1, 2000)]:
+                    #     txt += chunk
+            embed=discord.Embed(description=txt)
+            embed.set_author(name=lyric.title)
+            await ctx.send(embed=embed)
+        else:
+            await ctx.send("You are proving me stupid for letting you use my commands")
+
     @commands.command(brief="Plays audio from <url>.")
     @commands.guild_only()
     async def play(self, ctx, *, url):
         """Plays audio hosted at <url> (or performs a search for <url> and plays the first result)."""
 
         client = ctx.guild.voice_client
+        req_voice = ctx.author.voice
         state = self.get_state(ctx.guild)  # get the guild's state
 
-        if client and client.channel:
+        if client and client.channel and req_voice != None:
+            if req_voice.channel != client.channel:
+                users_in_channel = len([member for member in client.channel.members if not member.bot])
+                if users_in_channel:
+                    return await ctx.send("Someone else is listening to me right now, sad")
+                await client.move_to(req_voice.channel)
+
             async with ctx.channel.typing():
                 try:
                     video = Video(url, ctx.author)
@@ -369,9 +441,9 @@ class music(commands.Cog):
                 message = await ctx.send(f"Added to queue at index {len(state.playlist)}", embed=video.get_embed())
             await self._add_reaction_controls(message)
         else:
-            if ctx.author.voice != None and ctx.author.voice.channel != None:
+            if req_voice != None and ctx.author.voice.channel != None:
                 async with ctx.channel.typing():    
-                    channel = ctx.author.voice.channel
+                    channel = req_voice.channel
                     try:
                         video = Video(url, ctx.author)
                     except youtube_dl.DownloadError as e:
@@ -401,7 +473,7 @@ class music(commands.Cog):
                 state = self.get_state(guild)
                 client = message.guild.voice_client
                 
-                if perms.administrator or (user_in_channel and state.is_requester(user)) or permissions.is_owner(user=user):                  
+                if perms.administrator or state.is_requester(user) or permissions.is_owner(user=user) and user_in_channel:                  
                     
                     if reaction.emoji == "⏯":
                         # pause audio
@@ -428,7 +500,7 @@ class music(commands.Cog):
 
                     elif reaction.emoji == "⏹":
                         # disconnect bot
-                        self._leave(client, state)
+                        await self._leave(client, state)
                     
                     elif reaction.emoji == "🔁":
                         # loop/repeat the current audio or queue
@@ -508,10 +580,7 @@ class music(commands.Cog):
                 try:
                     user, before, after = await self.bot.wait_for('voice_state_update', timeout=300, check=vcheck)  # checks message reactions
                 except asyncio.TimeoutError:
-                    asyncio.run_coroutine_threadsafe(client.disconnect(),self.bot.loop)
-                    state.playlist = []
-                    state.now_playing = None
-                    state.last_audio = None
+                    await self._leave(client, state)
                 else:
                     if client.is_paused():
                         client.resume()

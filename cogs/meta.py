@@ -85,12 +85,12 @@ class meta(commands.Cog):
             chann = comd.channels
             chann.discard(str(role_chan))
             val = state.command(comd.server_wide, chann, comd.roles, False) if str(role_chan) not in state.get_var("all").channels else state.command(comd.server_wide, chann, comd.roles, True)
-            await ctx.send(f"Enabled {command} in {role_chan.mention}")
+            await ctx.send(f"Enabled `{command}` in {role_chan.mention}")
         elif isinstance(role_chan, discord.Role):
             rol = comd.roles
             rol.discard(str(role_chan))
             val = state.command(comd.server_wide, comd.channels, rol, False) if str(role_chan) not in state.get_var("all").roles else state.command(comd.server_wide, comd.channels, rol, True)
-            await ctx.send(f"Enabled {command} for {role_chan.mention}")
+            await ctx.send(f"Enabled `{command}` for {role_chan.mention}")
         elif role_chan != None:
             raise commands.errors.BadArgument()
         else:
@@ -154,19 +154,19 @@ class meta(commands.Cog):
             chann = comd.channels
             chann.add(str(role_chan))
             val = state.command(comd.server_wide, chann, comd.roles, False)
-            await ctx.send(f"Disabled {command} in {role_chan.mention}")
+            await ctx.send(f"Disabled `{command}` in {role_chan.mention}")
         elif isinstance(role_chan, discord.Role):
             rol = comd.roles
             rol.add(str(role_chan))
             val = state.command(comd.server_wide, comd.channels, rol, False)
-            await ctx.send(f"Disabled {command} for {role_chan.mention}")
+            await ctx.send(f"Disabled `{command}` for {role_chan.mention}")
         elif role_chan != None:
             raise commands.errors.BadArgument()
         else:
             val = state.command(False, set(), set(), False)
             if command == "all":    
                 self.unforce(state)
-            await ctx.send(f"Disabled {command} server-wide")
+            await ctx.send(f"Disabled `{command}` server-wide")
         state.set_var(str(cmd), val)
 
     def unforce(self, state):
@@ -197,11 +197,11 @@ class meta(commands.Cog):
         for cmd in cmds:
             comd = state.get_var(cmd)
             if comd.server_wide == False:
-                dis_cmds += f"\t`{cmd}` disabled server-wide\n"
+                dis_cmds += f"`{cmd}` disabled server-wide\n"
             if len(comd.channels) > 0:
-                dis_cmds += f"\t`{cmd}` disabled in channels {str(comd.channels).strip('{}')}\n"
+                dis_cmds += f"`{cmd}` disabled in channels {str(comd.channels).strip('{}')}\n"
             if len(comd.roles) > 0:
-                dis_cmds += f"\t`{cmd}` disabled for roles {str(comd.roles).strip('{}')}\n"
+                dis_cmds += f"`{cmd}` disabled for roles {str(comd.roles).strip('{}')}\n"
         
         if dis_cmds == "":
             return await ctx.send("Disabled command list is empty, darkness is its only friend now")
