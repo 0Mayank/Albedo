@@ -22,6 +22,7 @@ bot = commands.Bot(
     command_attrs=dict(hidden=True),
     help_command=HelpCommand()
 )
+
 @bot.check
 def check_availabilty(ctx):
     cmd = ctx.command

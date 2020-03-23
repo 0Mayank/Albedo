@@ -272,27 +272,30 @@ class music(commands.Cog):
                 discord.FFmpegPCMAudio(song.stream_url, before_options=" -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"), volume=state.volume)
 
         def after_playing(err):
-            
-            if state.loop == True:
-                self._play_song(client, state, state.now_playing)
-            elif state.loop_queue == True and len(state.playlist) > 0:
-                if state.last_audio == state.playlist[0]:
-                    state.last_audio = None
+            try:
+                if state.loop == True:
+                    self._play_song(client, state, state.now_playing)
+                elif state.loop_queue == True and len(state.playlist) > 0:
+                    if state.last_audio == state.playlist[0]:
+                        state.last_audio = None
+                    else:
+                        state.last_audio = state.now_playing
+                    next_song = state.playlist.pop(0)
+                    if state.last_audio:    
+                        state.playlist.append(state.now_playing)
+                    self._play_song(client, state, next_song)
+                elif len(state.playlist) > 0:
+                    if state.last_audio == state.playlist[0]:
+                        state.last_audio = None
+                    else:
+                        state.last_audio = state.now_playing
+                    next_song = state.playlist.pop(0)
+                    self._play_song(client, state, next_song)
                 else:
-                    state.last_audio = state.now_playing
-                next_song = state.playlist.pop(0)
-                if state.last_audio:    
-                    state.playlist.append(state.now_playing)
-                self._play_song(client, state, next_song)
-            elif len(state.playlist) > 0:
-                if state.last_audio == state.playlist[0]:
-                    state.last_audio = None
-                else:
-                    state.last_audio = state.now_playing
-                next_song = state.playlist.pop(0)
-                self._play_song(client, state, next_song)
-            else:
+                    asyncio.run_coroutine_threadsafe(client.disconnect(),self.bot.loop)
+            except Exception as e:
                 asyncio.run_coroutine_threadsafe(client.disconnect(),self.bot.loop)
+                #raise e
 
         client.play(source, after=after_playing)
 
@@ -368,7 +371,26 @@ class music(commands.Cog):
             await ctx.send("You must use a valid index.")
 
     @commands.command()
-    async def lyrics(self, ctx, *, query:str):
+    async def lyrics(self, ctx, *, query:str =None):
+        state = self.get_state(ctx.guild)
+        if await audio_playing(ctx) and query==None:
+            txt = ""
+            async with ctx.channel.typing():
+                query = state.now_playing.clean_title
+                lyric = get_song(query, 0)
+                source = requests.get(lyric.path).text
+                soup = BeautifulSoup(source, 'lxml')
+                tags = soup.find(class_="lyrics")
+                br_tags = tags.text.strip().split('\n\n')
+                for item in range(len(tags)):
+                    bt = br_tags[item]
+                    for chunk in bt:
+                        txt += chunk
+                return await safe_send(ctx, txt, lyric.title)
+
+        if query == None:
+            raise commands.errors.MissingRequiredArgument(query)
+        
         async with ctx.channel.typing():
             txt = "**Please select a track from the following results by responding with `1 - 5`:**\n"
             max_ind = 0
@@ -379,39 +401,37 @@ class music(commands.Cog):
                 except IndexError:
                     break
             await ctx.send(txt)
-        
+
         txt=""
 
         def mcheck(message):
-            if message.author == ctx.author:
+            if message.author == ctx.author and message.channel == ctx.channel:
                 return True
             return False
         try:    
             answer = await self.bot.wait_for('message', timeout=20, check=mcheck)
         except asyncio.TimeoutError:
             return await ctx.send("You didn't respond in time.")
-        if answer.content.isalpha():
-            return await ctx.send("Respond with a integer")
-        if int(answer.content) <= max_ind and int(answer.content) > 0:
+        content = answer.content.strip()
+        if not content.isnumeric():
+            return await ctx.send("Respond with an integer")
+        if int(content) <= max_ind and int(content) > 0:
             async with ctx.channel.typing():    
-                lyric = get_song(query, int(answer.content)-1)
-                #await ctx.send(f"**{lyric.title}**")
+                lyric = get_song(query, int(content)-1)
                 source = requests.get(lyric.path).text
                 soup = BeautifulSoup(source, 'lxml')
                 tags = soup.find(class_="lyrics")
                 br_tags = tags.text.strip().split('\n\n')
+
                 for item in range(len(tags)):
                     bt = br_tags[item]
                     for chunk in bt:
                         txt += chunk
-                    # for chunk in [bt[i:i+2000] for i in range(0, len(bt)+1, 2000)]:
-                    #     txt += chunk
-            embed=discord.Embed(description=txt)
-            embed.set_author(name=lyric.title)
-            await ctx.send(embed=embed)
+        
+                return await safe_send(ctx, txt, lyric.title)
         else:
-            await ctx.send("You are proving me stupid for letting you use my commands")
-
+            return await ctx.send("You are proving me stupid for letting you use my commands")
+        
     @commands.command(brief="Plays audio from <url>.")
     @commands.guild_only()
     async def play(self, ctx, *, url):
@@ -441,7 +461,7 @@ class music(commands.Cog):
                 message = await ctx.send(f"Added to queue at index {len(state.playlist)}", embed=video.get_embed())
             await self._add_reaction_controls(message)
         else:
-            if req_voice != None and ctx.author.voice.channel != None:
+            if req_voice != None:
                 async with ctx.channel.typing():    
                     channel = req_voice.channel
                     try:
@@ -456,7 +476,8 @@ class music(commands.Cog):
                     message = await ctx.send("", embed=video.get_embed())
                 await self._add_reaction_controls(message)
             else:
-                await ctx.send("Are you just stupid or retarded, which vc am i supposed to join if you are not even in one")
+                # await ctx.send("Are you just stupid or retarded, which vc am i supposed to join if you are not even in one")
+                await ctx.send("Join a voice channel.")
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):

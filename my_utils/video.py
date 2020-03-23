@@ -1,6 +1,7 @@
 import youtube_dl as ytdl
 import discord
 from my_utils.default import format_seconds
+import re
 
 YTDL_OPTS = {
     "default_search": "ytsearch",
@@ -21,12 +22,13 @@ class Video:
             self.stream_url = video_format["url"]
             self.video_url = video["webpage_url"]
             self.title = video["title"]
+            self.clean_title = video["clean_title"]
             self.uploader = video["uploader"] if "uploader" in video else ""
             self.thumbnail = video[
                 "thumbnail"] if "thumbnail" in video else None
             self.duration = video["duration"]
             self.requested_by = requested_by
-
+# [6:09] - Eminem - Rap God (Explicit) [Official Video] {gay} Lyric
     def _get_info(self, video_url):
         with ytdl.YoutubeDL(YTDL_OPTS) as ydl:
             info = ydl.extract_info(video_url, download=False)
@@ -36,6 +38,8 @@ class Video:
                     info["entries"][0]["url"])  # get info for first video
             else:
                 video = info
+            escaper = re.compile(r'((\[|\(|\||\{)(.*?)(\}|\||\)|\])|lyrics?|video)', re.IGNORECASE)               #? One of ma first re expressions! Matches the words which are contained in [], (), ||, {}
+            video["clean_title"]  = escaper.sub(r'\0', video["title"])
             return video
 
     def get_embed(self):

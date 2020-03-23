@@ -122,19 +122,55 @@ def add_zero(var):
         return var
 
 async def safe_send(ctx, txt, name):
-    embed = discord.Embed( 
-        color = discord.Colour.from_rgb(0,250,141), timestamp = ctx.message.created_at)
-    embed.set_author(name=name)
-    async def splitter(txt):    
-        if len(txt)>6000:
-            txt2 = txt[:6000]
-            txt2 = txt2.rsplit(' ', 1)[0]
-            embed.description = txt2
-            await ctx.send(embed=embed)
-            if len(txt[6000:])>6000:
-                await splitter(txt)
-    
+    embed= discord.Embed(color = discord.Colour.from_rgb(0,250,141), timestamp = ctx.message.created_at)
+    embed.set_author(name=name, icon_url=ctx.me.avatar_url)
+    pg=0
+    async def splitter(txt: str):    
+        nonlocal pg
+        l=5900
+        embed.clear_fields()
+        pg+=1
+        i=0
+        if len(txt)>l:
+            txt2 = txt[:l]
+            txt=txt[l:]
+            txt2 = txt2.rsplit(' ', 1)
+            txt =txt2[1] + txt
+            txt2=txt2[0]
+            embed.description = txt2[:2000].rsplit(' ', 1)[0]
+            txt2 = txt2[:2000].rsplit(' ', 1)[1] + txt2[2000:]
+            work_number = len(txt2)
+            
+            while i < work_number:
+                big_chunk = txt2[:1000]
+                big_chunk = big_chunk.rsplit(' ', 1) if len(big_chunk)>1000 else [big_chunk]
+                chunk = big_chunk[0]
+                embed.add_field(name=str("_ _"), value=chunk, inline=False)
+                txt2 = txt2[1000:]
+                txt2 = big_chunk[1] + txt2 if len(big_chunk)>1 else txt2
+                i+=1000
 
+
+            embed.set_footer(text=f"PAGE {pg}")
+            await ctx.send(embed=embed)
+            await splitter(txt)
+        else:
+            txt2=txt
+            embed.description = txt2[:2000].rsplit(' ', 1)[0]
+            txt2 = txt2[:2000].rsplit(' ', 1)[1] + txt2[2000:]
+            work_number = len(txt2)
+            while i <= work_number:
+                big_chunk = txt2[:1000]
+                big_chunk = big_chunk.rsplit(' ', 1) if len(big_chunk)>1000 else [big_chunk]
+                chunk = big_chunk[0]
+                embed.add_field(name=str("_ _"), value=chunk, inline=False)
+                txt2 = txt2[1000:]
+                txt2 = big_chunk[1] + txt2 if len(big_chunk)>1 else txt2
+                i+=1000
+            embed.set_footer(text=f"PAGE {pg}")
+            await ctx.send(embed=embed)
+    await splitter(txt)
+    
 
 def implement_numeral(number):
     count = 0

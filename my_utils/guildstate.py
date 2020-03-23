@@ -27,8 +27,8 @@ class GuildState:
         self.command = namedtuple("command", ["server_wide", "channels", "roles", "forced"])
         self.bot_prefix = "/"
         self.mute_exists = False
-        self.all = self.command(True, set(),set(), False)
         self.debugmode = False
+        self.all = self.command(True, set(),set(), False)
         self.desc = self.command(True, set(), set(), False)
         self.ping = self.command(True, set(), set(), False)
 
