@@ -7,25 +7,11 @@ from discord.utils import oauth_url
 
 from my_utils import default as d, permissions
 from my_utils.guildstate import state_instance
+from my_utils.converters import ComCog
 
 config = d.get("config.json")
 
 al_admins = config.almins
-
-class ComCog(commands.Converter):
-    async def convert(self, ctx, argument):
-        if argument.lower() == "all":   
-            dargument = "all"
-        else:   
-            dargument = ctx.bot.get_command(argument.lower())
-            if not dargument:
-                await ctx.send(f'No command {argument} found!')
-                raise commands.errors.CheckFailure("Just another day of the survey corps")
-            
-            if dargument.root_parent:
-                dargument = dargument.root_parent
-        
-        return (argument, dargument)
 
 class meta(commands.Cog):    
     """Contains the general commands or the commands related to the bot"""

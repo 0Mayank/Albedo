@@ -146,13 +146,8 @@ class fun(commands.Cog):
 
             result = sorted(url['list'], reverse=True, key=lambda g: int(g["thumbs_up"]))[0]
 
-            raw_definition = result['definition']
-            definition = ""
-            for value in raw_definition:
-                if value == "[" or value == "]":
-                    definition += "**"
-                else:
-                    definition += value
+            definition = result['definition']
+            definition = definition.replace("[", "**").replace("]", "**")
             if len(definition) >= 1500:
                 definition = definition[:1500]
                 definition = definition.rsplit(' ', 1)[0]

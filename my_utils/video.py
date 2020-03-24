@@ -28,7 +28,7 @@ class Video:
                 "thumbnail"] if "thumbnail" in video else None
             self.duration = video["duration"]
             self.requested_by = requested_by
-# [6:09] - Eminem - Rap God (Explicit) [Official Video] {gay} Lyric
+# [6:09] - Eminem - Rap God (Explicit ft.) [Official Video] {gay} Lyric ft. juice worsadl
     def _get_info(self, video_url):
         with ytdl.YoutubeDL(YTDL_OPTS) as ydl:
             info = ydl.extract_info(video_url, download=False)
@@ -38,7 +38,7 @@ class Video:
                     info["entries"][0]["url"])  # get info for first video
             else:
                 video = info
-            escaper = re.compile(r'((\[|\(|\||\{)(.*?)(\}|\||\)|\])|lyrics?|video)', re.IGNORECASE)               #? One of ma first re expressions! Matches the words which are contained in [], (), ||, {}
+            escaper = re.compile(r'((\[|\(|\||\{)(.*?)(\}|\||\)|\])|lyrics?|video|ft\. .*)', re.IGNORECASE)               #? One of ma first re expressions! Matches the words which are contained in [], (), ||, {}
             video["clean_title"]  = escaper.sub(r'\0', video["title"])
             return video
 

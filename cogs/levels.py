@@ -319,7 +319,7 @@ class levels(commands.Cog):
 
     @commands.command(aliases = ["rank"])
     async def profile(self, ctx, member: discord.Member = None):
-        """Shows the profile \-\_\-"""
+        r"""Shows the profile \-\_\-"""
 
         member = ctx.author if not member else member
         _initialise(str(member.id), False)

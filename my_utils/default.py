@@ -167,7 +167,7 @@ async def safe_send(ctx, txt, name):
                 txt2 = txt2[1000:]
                 txt2 = big_chunk[1] + txt2 if len(big_chunk)>1 else txt2
                 i+=1000
-            embed.set_footer(text=f"PAGE {pg}")
+            embed.set_footer(text=f"END")
             await ctx.send(embed=embed)
     await splitter(txt)
     

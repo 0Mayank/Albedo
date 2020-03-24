@@ -11,8 +11,7 @@ from bs4 import BeautifulSoup
 from urllib import request
 from my_utils.video import Video
 from my_utils import permissions
-from my_utils.default import format_seconds, to_seconds, safe_send
-
+from my_utils.default import format_seconds, to_seconds, safe_send, intcheck
 
 def get_song(query, item):
 
@@ -373,24 +372,22 @@ class music(commands.Cog):
     @commands.command()
     async def lyrics(self, ctx, *, query:str =None):
         state = self.get_state(ctx.guild)
-        if await audio_playing(ctx) and query==None:
-            txt = ""
+
+        if await audio_playing(ctx) and query == None:
             async with ctx.channel.typing():
                 query = state.now_playing.clean_title
-                lyric = get_song(query, 0)
-                source = requests.get(lyric.path).text
+                song = get_song(query, 0)
+                source = requests.get(song.path).text
                 soup = BeautifulSoup(source, 'lxml')
                 tags = soup.find(class_="lyrics")
-                br_tags = tags.text.strip().split('\n\n')
-                for item in range(len(tags)):
-                    bt = br_tags[item]
-                    for chunk in bt:
-                        txt += chunk
-                return await safe_send(ctx, txt, lyric.title)
+                lyrics = tags.text.strip()
+                lyrics = lyrics.replace("[", "**_").replace("]", "_**")
+
+                return await safe_send(ctx, lyrics, song.title)
 
         if query == None:
             raise commands.errors.MissingRequiredArgument(query)
-        
+
         async with ctx.channel.typing():
             txt = "**Please select a track from the following results by responding with `1 - 5`:**\n"
             max_ind = 0
@@ -402,33 +399,27 @@ class music(commands.Cog):
                     break
             await ctx.send(txt)
 
-        txt=""
-
         def mcheck(message):
             if message.author == ctx.author and message.channel == ctx.channel:
                 return True
             return False
-        try:    
+        try:
             answer = await self.bot.wait_for('message', timeout=20, check=mcheck)
         except asyncio.TimeoutError:
             return await ctx.send("You didn't respond in time.")
         content = answer.content.strip()
         if not content.isnumeric():
             return await ctx.send("Respond with an integer")
-        if int(content) <= max_ind and int(content) > 0:
-            async with ctx.channel.typing():    
-                lyric = get_song(query, int(content)-1)
-                source = requests.get(lyric.path).text
+        if intcheck(content) and int(content) <= max_ind and int(content) > 0:
+            async with ctx.channel.typing():
+                song = get_song(query, int(content)-1)
+                source = requests.get(song.path).text
                 soup = BeautifulSoup(source, 'lxml')
                 tags = soup.find(class_="lyrics")
-                br_tags = tags.text.strip().split('\n\n')
-
-                for item in range(len(tags)):
-                    bt = br_tags[item]
-                    for chunk in bt:
-                        txt += chunk
-        
-                return await safe_send(ctx, txt, lyric.title)
+                lyrics = tags.text.strip()
+                lyrics = lyrics.replace("[", "**_").replace("]", "_**")
+                
+                return await safe_send(ctx, lyrics, song.title)
         else:
             return await ctx.send("You are proving me stupid for letting you use my commands")
         
