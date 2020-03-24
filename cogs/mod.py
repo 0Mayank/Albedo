@@ -69,8 +69,8 @@ class mod(commands.Cog):
         
         if await permissions.check_priv(ctx, member):
             return
-        if ctx.me.top_role.position <= ctx.author.top_role.position:
-            return await ctx.send(f"{ctx.author} is above my permissions, I cannot change the nickname, sad vary ;-;")
+        if ctx.me.top_role.position <= member.top_role.position:
+            return await ctx.send(f"{member} is above my permissions, I cannot change the nickname, sad vary ;-;")
         try:
             await member.edit(nick=name, reason=default.responsible(ctx.author, "Changed by command"))
             message = f"Changed **{member.name}'s** nickname to **{name}**"
