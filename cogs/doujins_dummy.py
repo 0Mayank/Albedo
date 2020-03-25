@@ -14,7 +14,7 @@ class doujinshi(commands.Cog):
 
     @commands.command(usage="<ID of doujinshi>")
     async def read(self, ctx, ID):
-        """Read doujinshi by the Id you provided"""
+        """Read doujinshi by the Id which you provided"""
         pass
 
     @commands.command(aliases = ['dl'], brief="Download doujinshi by the Id you provided", usage="<ID of doujinshi>")
