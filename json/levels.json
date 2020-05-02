@@ -1,104 +1,383 @@
 {
     "617021917622173747": {
-        "497450643007602688": {
-            "total experience": 4343,
-            "current experience": 320,
-            "level": 6,
-            "last message": "2020-03-07 21:07:01.976612",
-            "rank": 3
-        },
         "356808133735219212": {
-            "total experience": 1200230171225,
-            "current experience": 2182783552,
-            "level": 7322,
-            "last message": "2020-03-07 20:56:40.367684",
-            "rank": 1
-        },
-        "643427412482457631": {
-            "total experience": 1669,
-            "current experience": 315,
-            "level": 4,
-            "last message": "2020-03-02 18:09:59.759762",
-            "rank": 10
-        },
-        "673524430416379905": {
-            "total experience": 4760,
-            "current experience": 725,
-            "level": 6,
-            "last message": "2020-03-02 18:28:31.013040",
-            "rank": 7
-        },
-        "614712517901680658": {
-            "total experience": 3460,
-            "current experience": 1024,
-            "level": 5,
-            "last message": "2020-03-07 13:23:27.376183",
+            "total experience": 92581,
+            "current experience": 9207,
+            "level": 17,
+            "last message": "2020-04-19 14:23:13.466058",
             "rank": 4
         },
-        "537174711608672257": {
-            "total experience": 1787,
-            "current experience": 450,
-            "level": 4,
-            "last message": "2020-03-07 20:20:51.864810",
-            "rank": 5
+        "497450643007602688": {
+            "total experience": 104718,
+            "current experience": 5941,
+            "level": 18,
+            "last message": "2020-04-19 13:59:40.116663",
+            "rank": 3
         },
         "580282285002194966": {
-            "total experience": 1179,
-            "current experience": 561,
-            "level": 3,
-            "last message": "2020-03-07 16:46:04.013841",
-            "rank": 9
-        },
-        "619800189372465153": {
-            "total experience": 1756,
-            "current experience": 420,
-            "level": 4,
-            "last message": "2020-03-07 21:36:00.294917",
+            "total experience": 61922,
+            "current experience": 4364,
+            "level": 15,
+            "last message": "2020-04-19 14:22:21.104576",
             "rank": 6
         },
-        "627484853599731732": {
-            "total experience": 865,
-            "current experience": 250,
-            "level": 3,
-            "last message": "2020-03-02 18:26:51.073899",
-            "rank": 12
+        "614712517901680658": {
+            "total experience": 124315,
+            "current experience": 8300,
+            "level": 19,
+            "last message": "2020-04-19 13:23:05.371023",
+            "rank": 1
         },
-        "413287145323626496": {
-            "total experience": 1657,
-            "current experience": 332,
-            "level": 4,
-            "last message": "2020-03-07 16:45:53.195693",
+        "537174711608672257": {
+            "total experience": 31974,
+            "current experience": 2143,
+            "level": 12,
+            "last message": "2020-04-06 09:56:15.400827",
             "rank": 7
         },
-        "270904126974590976": {
-            "total experience": 67,
-            "current experience": 67,
-            "level": 1,
-            "last message": "2020-02-27 19:45:07.999444",
-            "rank": 13
+        "619800189372465153": {
+            "total experience": 119939,
+            "current experience": 3882,
+            "level": 19,
+            "last message": "2020-04-19 14:21:29.102532",
+            "rank": 2
         },
-        "184405311681986560": {
-            "total experience": 263,
-            "current experience": 44,
+        "413287145323626496": {
+            "total experience": 77234,
+            "current experience": 7541,
+            "level": 16,
+            "last message": "2020-04-19 14:22:31.854737",
+            "rank": 5
+        },
+        "486590017150517248": {
+            "total experience": 475,
+            "current experience": 270,
             "level": 2,
-            "last message": "2020-03-02 15:49:19.731568",
-            "rank": 13
+            "last message": "2020-03-03 11:50:49.650925",
+            "rank": 9
+        },
+        "635094505384574987": {
+            "total experience": 351,
+            "current experience": 145,
+            "level": 2,
+            "last message": "2020-04-19 14:22:39.761115",
+            "rank": 10
+        },
+        "691850697771319328": {
+            "total experience": 611,
+            "current experience": 393,
+            "level": 2,
+            "last message": "2020-03-25 13:34:21.412386",
+            "rank": 8
+        },
+        "602115576370036754": {
+            "total experience": 94,
+            "current experience": 94,
+            "level": 1,
+            "last message": "2020-03-26 06:40:02.739940",
+            "rank": 11
+        },
+        "692067736834146334": {
+            "total experience": 43,
+            "current experience": 43,
+            "level": 1,
+            "last message": "2020-04-06 05:34:02.396431",
+            "rank": 12
+        },
+        "352831365542182916": {
+            "total experience": 57,
+            "current experience": 57,
+            "level": 1,
+            "last message": "2020-04-07 19:52:08.401440",
+            "rank": 12
+        },
+        "700706936013848657": {
+            "total experience": 78,
+            "current experience": 78,
+            "level": 1,
+            "last message": "2020-04-17 15:48:35.587483",
+            "rank": 12
         }
     },
     "599523411441483786": {
-        "356808133735219212": {
-            "total experience": 41,
-            "current experience": 41,
+        "614712517901680658": {
+            "total experience": 477,
+            "current experience": 275,
+            "level": 2,
+            "last message": "2020-04-22 05:08:35.847518",
+            "rank": 4
+        },
+        "537174711608672257": {
+            "total experience": 176,
+            "current experience": 176,
             "level": 1,
-            "last message": "2020-02-27 13:51:22.898677",
+            "last message": "2020-03-31 06:51:10.893474",
+            "rank": 5
+        },
+        "356808133735219212": {
+            "total experience": 3685,
+            "current experience": 1241,
+            "level": 5,
+            "last message": "2020-04-22 06:06:06.859172",
             "rank": 1
         },
-        "643427412482457631": {
-            "total experience": 24,
-            "current experience": 24,
+        "497450643007602688": {
+            "total experience": 1143,
+            "current experience": 535,
+            "level": 3,
+            "last message": "2020-04-12 09:42:13.886895",
+            "rank": 3
+        },
+        "413287145323626496": {
+            "total experience": 21,
+            "current experience": 21,
             "level": 1,
-            "last message": "2020-02-27 13:50:26.532109",
+            "last message": "2020-02-26 10:21:02.974128",
+            "rank": 7
+        },
+        "580282285002194966": {
+            "total experience": 90,
+            "current experience": 90,
+            "level": 1,
+            "last message": "2020-03-18 11:01:07.839370",
+            "rank": 6
+        },
+        "619800189372465153": {
+            "total experience": 1218,
+            "current experience": 600,
+            "level": 3,
+            "last message": "2020-04-02 08:44:33.820220",
             "rank": 2
+        }
+    },
+    "629614364810412032": {
+        "356808133735219212": {
+            "total experience": 1699,
+            "current experience": 368,
+            "level": 4,
+            "last message": "2020-04-18 13:56:15.382001",
+            "rank": 1
+        },
+        "580282285002194966": {
+            "total experience": 122,
+            "current experience": 122,
+            "level": 1,
+            "last message": "2020-03-09 10:22:00.474157",
+            "rank": 5
+        },
+        "497450643007602688": {
+            "total experience": 38,
+            "current experience": 38,
+            "level": 1,
+            "last message": "2020-03-24 15:33:13.953203",
+            "rank": 6
+        },
+        "614712517901680658": {
+            "total experience": 411,
+            "current experience": 209,
+            "level": 2,
+            "last message": "2020-04-18 13:56:22.835130",
+            "rank": 4
+        },
+        "537174711608672257": {
+            "total experience": 506,
+            "current experience": 286,
+            "level": 2,
+            "last message": "2020-03-31 06:51:16.674771",
+            "rank": 3
+        },
+        "619800189372465153": {
+            "total experience": 507,
+            "current experience": 294,
+            "level": 2,
+            "last message": "2020-03-29 11:58:26.267401",
+            "rank": 3
+        },
+        "486590017150517248": {
+            "total experience": 25,
+            "current experience": 25,
+            "level": 1,
+            "last message": "2020-03-07 08:15:03.380049",
+            "rank": 7
+        },
+        "442250297570623489": {
+            "total experience": 16,
+            "current experience": 16,
+            "level": 1,
+            "last message": "2020-03-07 09:15:30.561176",
+            "rank": 7
+        }
+    },
+    "684074487485956127": {
+        "619800189372465153": {
+            "total experience": 7116,
+            "current experience": 835,
+            "level": 7,
+            "last message": "2020-05-02 09:45:25.119820",
+            "rank": 1
+        },
+        "356808133735219212": {
+            "total experience": 3030,
+            "current experience": 600,
+            "level": 5,
+            "last message": "2020-04-24 12:35:23.005123",
+            "rank": 2
+        },
+        "413287145323626496": {
+            "total experience": 1440,
+            "current experience": 118,
+            "level": 4,
+            "last message": "2020-04-21 18:57:11.852749",
+            "rank": 6
+        },
+        "614712517901680658": {
+            "total experience": 2740,
+            "current experience": 280,
+            "level": 5,
+            "last message": "2020-04-17 04:49:59.261866",
+            "rank": 3
+        },
+        "537174711608672257": {
+            "total experience": 477,
+            "current experience": 272,
+            "level": 2,
+            "last message": "2020-03-31 06:51:03.768540",
+            "rank": 7
+        },
+        "580282285002194966": {
+            "total experience": 2047,
+            "current experience": 715,
+            "level": 4,
+            "last message": "2020-05-02 09:31:51.809351",
+            "rank": 5
+        },
+        "497450643007602688": {
+            "total experience": 2124,
+            "current experience": 774,
+            "level": 4,
+            "last message": "2020-05-01 05:43:54.479732",
+            "rank": 4
+        },
+        "602115576370036754": {
+            "total experience": 22,
+            "current experience": 22,
+            "level": 1,
+            "last message": "2020-03-26 06:35:15.484681",
+            "rank": 9
+        },
+        "352831365542182916": {
+            "total experience": 22,
+            "current experience": 22,
+            "level": 1,
+            "last message": "2020-04-09 09:18:43.660599",
+            "rank": 9
+        },
+        "536435408096198656": {
+            "total experience": 50,
+            "current experience": 50,
+            "level": 1,
+            "last message": "2020-04-19 13:58:14.911162",
+            "rank": 8
+        },
+        "284052983539433473": {
+            "total experience": 25,
+            "current experience": 25,
+            "level": 1,
+            "last message": "2020-04-23 17:53:53.975733",
+            "rank": 9
+        },
+        "635094505384574987": {
+            "total experience": 17,
+            "current experience": 17,
+            "level": 1,
+            "last message": "2020-05-01 21:30:32.966206",
+            "rank": 12
+        }
+    },
+    "697052420257218630": {
+        "497450643007602688": {
+            "total experience": 31507,
+            "current experience": 1649,
+            "level": 12,
+            "last message": "2020-05-02 10:13:23.029797",
+            "rank": 4
+        },
+        "580282285002194966": {
+            "total experience": 31874,
+            "current experience": 2059,
+            "level": 12,
+            "last message": "2020-05-02 10:13:21.936034",
+            "rank": 3
+        },
+        "356808133735219212": {
+            "total experience": 30605,
+            "current experience": 758,
+            "level": 12,
+            "last message": "2020-05-02 10:12:11.605121",
+            "rank": 5
+        },
+        "619800189372465153": {
+            "total experience": 43747,
+            "current experience": 6004,
+            "level": 13,
+            "last message": "2020-05-02 10:14:26.610224",
+            "rank": 1
+        },
+        "614712517901680658": {
+            "total experience": 16518,
+            "current experience": 3649,
+            "level": 9,
+            "last message": "2020-05-02 10:11:08.415183",
+            "rank": 6
+        },
+        "413287145323626496": {
+            "total experience": 38963,
+            "current experience": 1252,
+            "level": 13,
+            "last message": "2020-05-02 09:44:45.742676",
+            "rank": 2
+        },
+        "352831365542182916": {
+            "total experience": 18,
+            "current experience": 18,
+            "level": 1,
+            "last message": "2020-04-19 19:22:08.028084",
+            "rank": 10
+        },
+        "692067736834146334": {
+            "total experience": 84,
+            "current experience": 84,
+            "level": 1,
+            "last message": "2020-04-25 16:16:12.597449",
+            "rank": 9
+        },
+        "700290694916472882": {
+            "total experience": 25,
+            "current experience": 25,
+            "level": 1,
+            "last message": "2020-04-27 06:54:08.929582",
+            "rank": 10
+        },
+        "537174711608672257": {
+            "total experience": 524,
+            "current experience": 314,
+            "level": 2,
+            "last message": "2020-04-30 11:49:31.691230",
+            "rank": 7
+        },
+        "442250297570623489": {
+            "total experience": 17,
+            "current experience": 17,
+            "level": 1,
+            "last message": "2020-04-29 04:42:06.800061",
+            "rank": 11
+        },
+        "635094505384574987": {
+            "total experience": 118,
+            "current experience": 118,
+            "level": 1,
+            "last message": "2020-05-02 10:09:25.550674",
+            "rank": 8
         }
     }
 }

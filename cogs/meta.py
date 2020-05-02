@@ -59,7 +59,7 @@ class meta(commands.Cog):
         await ctx.send(">>> I love Ainz sama")
 
     @commands.group(invoke_without_command = True, usage="<command> [channel|role]")
-    @permissions.has_permissions(perms = "manage_server")
+    @permissions.has_permissions(manage_guild=True)
     async def enable(self, ctx, command:ComCog, role_chan: typing.Union[discord.TextChannel, discord.Role, str] = None):
         """Enables a given command"""
         
@@ -128,7 +128,7 @@ class meta(commands.Cog):
         await ctx.send("Enabled debugmode...")
 
     @commands.group(invoke_without_command=True, usage="<command> [channel|role]", brief="disables a given command")
-    @permissions.has_permissions(perms = "manage_server")
+    @permissions.has_permissions(manage_guild=True)
     async def disable(self, ctx, command:ComCog, role_chan: typing.Union[discord.TextChannel, discord.Role, str] = None):
         """You can provide a command to be disabled in a channel, for a particular role or server wide(don't pass anything)"""
         

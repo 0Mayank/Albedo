@@ -3,7 +3,7 @@
       {
         "name": "Albedo",
         "script": "albedo.py",
-        "interpreter": "python3.8",
+        "interpreter": "python",
         "interpreter_args": "-u"
       }
     ]

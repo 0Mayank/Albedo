@@ -12,6 +12,9 @@ from urllib import request
 from my_utils.video import Video
 from my_utils import permissions
 from my_utils.default import format_seconds, to_seconds, safe_send, intcheck
+from my_utils.decorators import shared_cooldown
+
+cooldown = shared_cooldown(1, 5, commands.BucketType.guild)
 
 def get_song(query, item):
 
@@ -82,7 +85,8 @@ class music(commands.Cog):
 
     @commands.command(aliases=["stop"])
     @commands.guild_only()
-    @permissions.has_permissions(perms = "administrator")
+    @permissions.has_permissions(administrator=True)
+    @cooldown
     async def leave(self, ctx):
         """Leaves the voice channel, if currently in one."""
         client = ctx.guild.voice_client
@@ -106,6 +110,7 @@ class music(commands.Cog):
     @commands.guild_only()
     @commands.check(audio_playing)
     @commands.check(in_voice_channel)
+    @cooldown
     async def shuffle(self, ctx):
         """Shuffles the queue"""
         state = self.get_state(ctx.guild)
@@ -123,6 +128,7 @@ class music(commands.Cog):
     @commands.check(audio_playing)
     @commands.check(in_voice_channel)
     @commands.check(is_audio_requester)
+    @cooldown
     async def seek(self, ctx: commands.Context, time):
         """Seek the audio to a given time. Example: seek 6:09"""
         
@@ -143,6 +149,7 @@ class music(commands.Cog):
     @commands.check(audio_playing)
     @commands.check(in_voice_channel)
     @commands.check(is_audio_requester)
+    @cooldown
     async def pause(self, ctx):
         """Pauses any currently playing audio."""
         client = ctx.guild.voice_client
@@ -158,6 +165,7 @@ class music(commands.Cog):
     @commands.guild_only()
     @commands.check(audio_playing)
     @commands.check(in_voice_channel)
+    @cooldown
     async def loop(self, ctx):
         """loops any currently playing audio."""
 
@@ -165,6 +173,7 @@ class music(commands.Cog):
         await ctx.send(reply)
     
     @loop.command(aliases = ["full"])
+    @cooldown
     async def all(self, ctx):
         """loops the queue"""
         
@@ -175,6 +184,7 @@ class music(commands.Cog):
         await ctx.send("Looping the queue")
 
     @loop.command()
+    @cooldown
     async def off(self, ctx):
         """Disable looping of any type"""
 
@@ -203,6 +213,7 @@ class music(commands.Cog):
     @commands.check(audio_playing)
     @commands.check(in_voice_channel)
     @commands.check(is_audio_requester)
+    @cooldown
     async def volume(self, ctx, volume: int):
         """Change the volume of currently playing audio (values 0-250)."""
         state = self.get_state(ctx.guild)
@@ -226,11 +237,13 @@ class music(commands.Cog):
     @commands.guild_only()
     @commands.check(audio_playing)
     @commands.check(in_voice_channel)
+    @cooldown
     async def skip(self, ctx):
         """Skips the currently playing song, or votes to skip it."""
         state = self.get_state(ctx.guild)
         client = ctx.guild.voice_client
-        if await permissions.check_permissions(ctx, {"perms": "administrator"}) or state.is_requester(ctx.author):
+        perms = ctx.channel.permissions_for(ctx.author)
+        if perms.administrator or state.is_requester(ctx.author) or permissions.is_owner(ctx):
             # immediately skip if requester or admin
             state.loop = False
             state.loop_queue = False
@@ -330,7 +343,8 @@ class music(commands.Cog):
     @commands.command(aliases=["cq"])
     @commands.guild_only()
     @commands.check(audio_playing)
-    @permissions.has_permissions(perms = "administrator")
+    @permissions.has_permissions(administrator=True)
+    @cooldown
     async def clearqueue(self, ctx):
         """Clears the play queue without leaving the channel."""
         state = self.get_state(ctx.guild)
@@ -339,7 +353,8 @@ class music(commands.Cog):
     @commands.command(aliases=["jq"])
     @commands.guild_only()
     @commands.check(audio_playing)
-    # @permissions.has_permissions(perms = "administrator")                  #! decide if this should be uncommented
+    # @permissions.has_permissions(administrator=True)                  #! decide if this should be uncommented
+    @cooldown
     async def jumpqueue(self, ctx, song: int, new_index: int):
         """Moves song at an index to a new index in queue."""
         
@@ -355,7 +370,8 @@ class music(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.check(audio_playing)
-    # @permissions.has_permissions(perms = "administrator")                  #! decide if this should be uncommented
+    # @permissions.has_permissions(administrator=True)                  #! decide if this should be uncommented
+    @cooldown
     async def remove(self, ctx, index: int):
         """Remove a song at the given index in the queue"""
         state = self.get_state(ctx.guild)  # get state for this guild
@@ -370,6 +386,7 @@ class music(commands.Cog):
             await ctx.send("You must use a valid index.")
 
     @commands.command()
+    @cooldown
     async def lyrics(self, ctx, *, query:str =None):
         state = self.get_state(ctx.guild)
 
@@ -425,6 +442,7 @@ class music(commands.Cog):
         
     @commands.command(brief="Plays audio from <url>.")
     @commands.guild_only()
+    @cooldown
     async def play(self, ctx, *, url):
         """Plays audio hosted at <url> (or performs a search for <url> and plays the first result)."""
 

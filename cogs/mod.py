@@ -106,7 +106,7 @@ class mod(commands.Cog):
     @commands.command(aliases = ['silent', "choke"], hidden = False)
     @commands.check(check_mute)
     @commands.guild_only()
-    @permissions.has_permissions(perms="manage_roles")
+    @permissions.has_permissions(manage_roles=True)
     async def mute(self, ctx, member: discord.Member, *, reason:str = None):
         """Server mute the mentioned user(only text channels), requires you to have manage roles permission"""
 
@@ -334,7 +334,7 @@ class mod(commands.Cog):
         await self.do_removal(ctx, search, predicate)
 
     @clear.command(name='users')
-    async def _users(self, ctx, prefix=None, search=100):
+    async def _users(self, ctx, search=100):
         """Removes only user messages. """
 
         def predicate(m):
