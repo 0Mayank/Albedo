@@ -197,11 +197,11 @@ class music(commands.Cog):
     def _loop(self, ctx):
         state = self.get_state(ctx.guild)
         reply = ""
-        if state.loop == False:
+        if state.loop is False:
             state.loop = True
             state.loop_queue = False
             reply = "Looping current song"
-        elif state.loop == True or state.loop_queue == True:
+        elif state.loop is True or state.loop_queue == True:
             state.loop = False
             state.loop_queue = False
             reply = "Looping disabled"
@@ -285,9 +285,9 @@ class music(commands.Cog):
 
         def after_playing(err):
             try:
-                if state.loop == True:
+                if state.loop is True:
                     self._play_song(client, state, state.now_playing)
-                elif state.loop_queue == True and len(state.playlist) > 0:
+                elif state.loop_queue is True and len(state.playlist) > 0:
                     if state.last_audio == state.playlist[0]:
                         state.last_audio = None
                     else:
@@ -517,7 +517,7 @@ class music(commands.Cog):
                     
                     elif reaction.emoji == "⏮":
                         if state.last_audio == None:    # if its the first song, restart it
-                            if state.loop == True:
+                            if state.loop is True:
                                 client.stop()
                             else:
                                 state.playlist.insert(0, state.now_playing)  # insert current song at beginning of playlist
@@ -534,10 +534,10 @@ class music(commands.Cog):
                     
                     elif reaction.emoji == "🔁":
                         # loop/repeat the current audio or queue
-                        if state.loop == True:
+                        if state.loop is True:
                             state.loop, state.loop_queue = False, True
                             await message.channel.send("Looping the queue")
-                        elif state.loop_queue == True:
+                        elif state.loop_queue is True:
                             state.loop_queue = False
                             await message.channel.send("Looping disabled")
                         else:
@@ -562,10 +562,10 @@ class music(commands.Cog):
                     
                     elif reaction.emoji == "🔁":
                         # loop/repeat the current audio or queue
-                        if state.loop == True:
+                        if state.loop is True:
                             state.loop, state.loop_queue = False, True
                             await message.channel.send("Looping the queue", delete_after=2)
-                        elif state.loop_queue == True:
+                        elif state.loop_queue is True:
                             state.loop_queue = False
                             await message.channel.send("Looping disabled", delete_after=2)
                         else:
