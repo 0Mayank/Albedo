@@ -1,8 +1,7 @@
 import discord
 
-from my_utils import permissions, default as d
+from my_utils import permissions
 from discord.ext.commands import AutoShardedBot, DefaultHelpCommand
-import os
 
 Hidden_cogs = ["memberlog", "events"]
 

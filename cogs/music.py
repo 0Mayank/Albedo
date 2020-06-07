@@ -8,7 +8,6 @@ import random
 from collections import namedtuple
 import requests
 from bs4 import BeautifulSoup
-from urllib import request
 from my_utils.video import Video
 from my_utils import permissions
 from my_utils.default import format_seconds, to_seconds, safe_send, intcheck

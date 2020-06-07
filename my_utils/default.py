@@ -8,8 +8,6 @@ from io import BytesIO
 import discord
 import timeago as timesince
 
-from my_utils.guildstate import state_instance
-
 
 def get(file):
     try:

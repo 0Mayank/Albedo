@@ -1,14 +1,12 @@
 import random
-import re
 from datetime import datetime, timedelta
 import io
-import urllib
 import os
 
 import discord
 import requests
 from dateutil.parser import parse
-from discord.ext import commands, tasks
+from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 from my_utils import default as d, permissions

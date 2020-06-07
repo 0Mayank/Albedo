@@ -1,15 +1,12 @@
 import discord
-import os
-from discord.ext import commands, tasks
+from discord.ext import commands
 import random
-import urllib
 import aiohttp
 import requests
 import asyncio
-import logging
 
 from io import BytesIO
-from my_utils import lists, permissions, default, argparser
+from my_utils import lists, permissions
 
 def intcheck(it):                                                       #Interger checker
     isit = True

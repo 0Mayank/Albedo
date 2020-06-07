@@ -6,7 +6,6 @@ import os
 import sys
 import requests
 import asyncio
-from io import BytesIO
 
 from discord.ext import commands
 from my_utils import permissions, default, dataIO

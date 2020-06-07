@@ -1,6 +1,5 @@
 import discord
-import os
-from discord.ext import commands, tasks
+from discord.ext import commands
 
 class utility(commands.Cog):    
     """Some utility commands for you guys, might be able to help in whatever you are trying to do"""

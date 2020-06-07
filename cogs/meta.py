@@ -1,8 +1,7 @@
-import os
 import typing
 
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord.utils import oauth_url
 
 from my_utils import default as d, permissions
