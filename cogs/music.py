@@ -117,7 +117,8 @@ class music(commands.Cog):
         self._shuffle(state)
         await ctx.send(self._queue_text(state.playlist))
 
-    def _shuffle(self, state):
+    @staticmethod
+    def _shuffle(state):
         """Handles the shuffling of queue"""
         old_queue = state.playlist
         random.shuffle(old_queue)
@@ -155,7 +156,8 @@ class music(commands.Cog):
         client = ctx.guild.voice_client
         self._pause_audio(client)
 
-    def _pause_audio(self, client):
+    @staticmethod
+    def _pause_audio(client):
         if client.is_paused():
             client.resume()
         else:
@@ -328,7 +330,8 @@ class music(commands.Cog):
         state = self.get_state(ctx.guild)
         await ctx.send(self._queue_text(state.playlist))
 
-    def _queue_text(self, queue):
+    @staticmethod
+    def _queue_text(queue):
         """Returns a block of text describing a given song queue."""
         if len(queue) > 0:
             message = [f"{len(queue)} songs in queue:"]

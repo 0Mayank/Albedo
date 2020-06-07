@@ -155,7 +155,8 @@ class meta(commands.Cog):
             await ctx.send(f"Disabled `{command}` server-wide")
         state.set_var(str(cmd), val)
 
-    def unforce(self, state):
+    @staticmethod
+    def unforce(state):
         for command_name in state.get_commands():
             command_obj = state.get_var(command_name)
             if command_obj.forced:
