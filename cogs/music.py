@@ -305,7 +305,7 @@ class music(commands.Cog):
                     self._play_song(client, state, next_song)
                 else:
                     asyncio.run_coroutine_threadsafe(client.disconnect(),self.bot.loop)
-            except Exception as e:
+            except Exception:
                 asyncio.run_coroutine_threadsafe(client.disconnect(),self.bot.loop)
                 #raise e
 

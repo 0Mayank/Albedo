@@ -203,7 +203,7 @@ class fun(commands.Cog):
         
         while 1:
             try:
-                reaction, user = await self.bot.wait_for('reaction_add', timeout=60, check=rcheck)  # checks message reactions
+                reaction, _ = await self.bot.wait_for('reaction_add', timeout=60, check=rcheck)  # checks message reactions
             except asyncio.TimeoutError:  # session has timed out what a fucking nerd
                 try:
                     await message.clear_reactions()
