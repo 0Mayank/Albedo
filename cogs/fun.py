@@ -170,14 +170,17 @@ class fun(commands.Cog):
 
         response = requests.get("https://i.alexflipnote.dev/500ce4.gif")
         with open("noticeme.gif", "wb") as f:
-            f.write(response.content)
+            img = f.write(response.content)
+        
+        await ctx.send(file=discord.File("noticeme.gif"))
 
 
     @commands.command(aliases=['jokes', 'funny'])
     async def joke(self, ctx, nsfw: str = "true"):
         """Random Joke"""
-         
-        buttons = ["<:al_up:681864791555440681>", "<:al_down:681864001948614684>"]
+        al_up = '<:albedo_up:707238652836708422>'
+        al_down = '<:albedo_down:707238696516321351>'
+        buttons = [al_up, al_down]
         url = "https://joke3.p.rapidapi.com/v1/joke"
         if nsfw.lower() == "false":
             nsfw = False
@@ -191,7 +194,7 @@ class fun(commands.Cog):
             }
 
         joke = requests.request("GET", url, headers=headers, params=querystring).json()
-        message = await ctx.send(f"{joke['content']}\n> <:al_up:681864791555440681>: {joke['upvotes']} <:al_down:681864001948614684>: {joke['downvotes']}")
+        message = await ctx.send(f"{joke['content']}\n> {al_up}: {joke['upvotes']} {al_down}: {joke['downvotes']}")
         for button in buttons:    
             await message.add_reaction(button)
         reacted = [self.bot.user]
@@ -210,12 +213,12 @@ class fun(commands.Cog):
                 except discord.errors.Forbidden:
                     pass
                 break
-            if str(reaction.emoji) == '<:al_up:681864791555440681>':
+            if str(reaction.emoji) == al_up:
                 upvote = requests.request("POST", f"https://joke3.p.rapidapi.com/v1/joke/{joke['id']}/upvote", headers=headers).json()
-                await message.edit(content=f"{upvote['content']}\n> <:al_up:681864791555440681>: {upvote['upvotes']} <:al_down:681864001948614684>: {upvote['downvotes']}")
-            elif str(reaction.emoji) == '<:al_down:681864001948614684>':
+                await message.edit(content=f"{upvote['content']}\n> {al_up}: {upvote['upvotes']} {al_down}: {upvote['downvotes']}")
+            elif str(reaction.emoji) == al_down:
                 downvote = requests.request("POST", f"https://joke3.p.rapidapi.com/v1/joke/{joke['id']}/downvote", headers=headers).json()
-                await message.edit(content=f"{downvote['content']}\n> <:al_up:681864791555440681>: {downvote['upvotes']} <:al_down:681864001948614684>: {downvote['downvotes']}")
+                await message.edit(content=f"{downvote['content']}\n> {al_up}: {downvote['upvotes']} {al_down}: {downvote['downvotes']}")
 
     @commands.command(aliases=['quote'])
     async def quotes(self, ctx):

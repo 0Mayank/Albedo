@@ -168,7 +168,7 @@ class meta(commands.Cog):
         """Disable debugmode"""
 
         state = state_instance.get_state(ctx.guild.id)
-        state.set_var("debugmode", True)
+        state.set_var("debugmode", False)
 
         await ctx.send("Disabled debugmode...")
     

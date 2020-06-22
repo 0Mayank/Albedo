@@ -7,6 +7,11 @@ from discord.ext import commands
 from my_utils.default import all_cases, get
 from my_utils.data import Bot, HelpCommand
 from my_utils.guildstate import state_instance
+from honeybadger import honeybadger
+honeybadger.configure(api_key='7bc15b0b')
+
+#raise Exception, "This will get reported!"
+
 
 config = get("config.json")
 
@@ -63,6 +68,7 @@ def run():
 formatter = logging.Formatter(
     fmt="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s")
 
+#logging.getLogger('honeybadger').addHandler(logging.StreamHandler())
 
 # logger = logging.getLogger('discord')
 # logger.setLevel(logging.DEBUG)

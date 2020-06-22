@@ -26,7 +26,7 @@ class mod(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.config = default.get("config.json")
-
+    
     @commands.command(aliases=["nick"])
     @commands.guild_only()
     @permissions.has_permissions(manage_nicknames=True)

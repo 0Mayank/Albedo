@@ -7,6 +7,7 @@ import discord
 import psutil
 from discord.ext import commands
 from discord.ext.commands import errors
+from honeybadger import honeybadger
 
 from my_utils import default
 from my_utils.guildstate import state_instance
@@ -28,18 +29,19 @@ class events(commands.Cog):
         
         if isinstance(err, errors.MissingRequiredArgument) or isinstance(err, errors.BadArgument):
             helper = str(ctx.invoked_subcommand) if ctx.invoked_subcommand else str(ctx.command)
+            await ctx.send("Bruh, take a look at the syntax of this command (ˉ﹃ˉ)")
             await ctx.send_help(helper)
 
         elif isinstance(err, errors.CommandInvokeError):
             error = default.traceback_maker(err.original)
-
-            if "2000 or fewer" in str(err) and len(ctx.message.clean_content) > 1900:
+            if "2000 or fewer" in str(err) or len(ctx.message.clean_content) > 1900:
                 return await ctx.send(
                     f"You attempted to make the command display more than 2,000 characters...\n"
-                    f"Both error and command will be ignored."
+                    f"Both error and command will be ignored. Baka."
                 )
 
-            await ctx.send(f"There was an error processing the command ;-;\n{error}")
+            await ctx.send(f"There was an error processing the command ಥ_ಥ")
+            honeybadger.notify(err)
             logging.error("Ignoring exception in command {}:".format(ctx.command))
             logging.error("\n" + "".join(traceback.format_exception(type(error), err, err.__traceback__)))
 

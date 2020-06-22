@@ -6,6 +6,7 @@ import os
 import sys
 import requests
 import asyncio
+import re
 from io import BytesIO
 
 from discord.ext import commands
@@ -18,6 +19,36 @@ class admin(commands.Cog):
         self.bot = bot
         self.config = default.get("config.json")
         self._last_result = None
+        self.bully_session = {"status": False,"pussys": set()}
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        def predicate(message):
+            emoji_check = re.compile(r'<a?:(.*?):(\d{17,21})>|[\u263a-\U0001f645]')
+            return emoji_check.search(message.content)
+        
+        if self.bully_session["status"] and message.author in self.bully_session["pussys"]:
+            await message.channel.purge(limit=1, check=predicate)
+
+    @commands.command()
+    @commands.check(permissions.is_owner)
+    async def bully(self, ctx, member: discord.Member, mode = None):
+        text_channels = ctx.guild.text_channels
+        for channel in text_channels:
+            await channel.set_permissions(member, manage_permissions=False, manage_messages=False, embed_links=False, attach_files=False, send_messages=False)
+        self.bully_session["status"] = True
+        self.bully_session["pussys"].add(member)
+        await ctx.send(f"Easy bullying session started, time to get fucked {member.mention}")
+    
+    @commands.command()
+    @commands.check(permissions.is_owner)
+    async def forgive(self, ctx, member: discord.Member):
+        text_channels = ctx.guild.text_channels
+        for channel in text_channels:
+            await channel.set_permissions(member, overwrite=None)
+        self.bully_session["status"] = False
+        self.bully_session["pussys"].discard(member)
+        await ctx.send(f"you are lucky my master forgave you, fucking bitch {member.mention}")
 
     @commands.command()
     @commands.check(permissions.is_owner)
@@ -33,6 +64,9 @@ class admin(commands.Cog):
     @commands.check(permissions.is_owner)
     async def unload(self, ctx, name: str):
         """ Unloads an extension. """
+        if name == "admin":
+            return await ctx.send("Nop, won't do dat")
+        
         try:
             self.bot.unload_extension(f"cogs.{name}")
         except Exception as e:
@@ -247,7 +281,7 @@ class admin(commands.Cog):
             await ctx.message.attachments[0].save(f"{ctx.message.attachments[0].filename}")
         else:
             return await ctx.send("Provide a file as an attachment")
-        await ctx.message.delete(delay=1)
+        await ctx.message.delete(delay=0.1)
         return await ctx.send(f"The {ctx.message.attachments[0].filename} has been added")
     
     @fil.group()
@@ -272,6 +306,6 @@ class admin(commands.Cog):
         except Exception as e:
             await ctx.send(e)
         await ctx.message.delete(delay=1)
-
+    
 def setup(bot):
     bot.add_cog(admin(bot))
