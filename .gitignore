@@ -16,7 +16,7 @@ youtube-wGUroMhu1M0-Sword_Art_Online_Alicization_-_War_of_Underworld_Ending_1_-_
 .git
 __pycache__/
 cogs/__pycache__/
-ec2-18-234-71-119.compute-1.amazonaws.com.rdp
+ec2-18-206-227-33.compute-1.amazonaws.com.rdp
 .mypy_cache
 noticeme.gif
 output.png
@@ -25,6 +25,7 @@ image.py
 albedo.log
 .venv
 ffmpeg/
+json/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
