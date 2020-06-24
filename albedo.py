@@ -8,13 +8,10 @@ from my_utils.default import all_cases, get
 from my_utils.data import Bot, HelpCommand
 from my_utils.guildstate import state_instance
 from honeybadger import honeybadger
-honeybadger.configure(api_key='7bc15b0b')
-
-#raise Exception, "This will get reported!"
-
 
 config = get("config.json")
 
+honeybadger.configure(api_key=config.api_key)
 command_prefix = all_cases(config.prefix)
 
 def get_prefix(bot, message):

@@ -21,10 +21,15 @@ def get(file):
         raise FileNotFoundError("JSON file wasn't found")
 
 
-def traceback_maker(err, advance: bool = True):
+def traceback_maker(err, advance: bool = True, only_traceback: bool = False):
     _traceback = ''.join(traceback.format_tb(err.__traceback__))
     error = ('```py\n{1}{0}: {2}\n```').format(type(err).__name__, _traceback, err)
-    return error if advance else f"{type(err).__name__}: {err}"
+    if only_traceback:
+        return _traceback
+    elif advance:
+        return error
+    else:
+        return f"{type(err).__name__}: {err}"
 
 
 def timetext(name):

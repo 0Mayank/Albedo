@@ -43,30 +43,66 @@ class anime(commands.Cog):
             }
 
         response = requests.request("GET", url, headers=headers, params=querystring).json()
-        try:
-            image = response["results"][0]["image_url"]
-            title = response["results"][0]["title"]
-            episodes = response["results"][0]["episodes"]
-            score = response["results"][0]["score"]
-            desc = response["results"][0]["synopsis"]
-            url = response["results"][0]["url"]
+        
+        async with ctx.channel.typing():
+            txt = "**Select an anime from the following results by responding with an integer:**\n"
+            max_ind = 0
+            for i in range(10):
+                try:
+                    txt += f"**{i+1}**. {response['results'][i]['title']}\n"
+                    max_ind += 1
+                except IndexError:
+                    break
+            if max_ind != 0:
+                mes = await ctx.send(txt)
+                
+                try:
+                    def mcheck(message):
+                        if message.author == ctx.author and message.channel == ctx.channel:
+                            return True
+                        return False
 
-            embed = discord.Embed(
-                title = title,
-                color = discord.Colour.from_rgb(0,250,141), timestamp=ctx.message.created_at,
-                url = url,
-                description = desc
-            )       
-            embed.add_field(name="Episodes", value= episodes)
-            embed.add_field(name="Score", value = score)
-            # embed.add_field(name="Synopsis", value = desc)
-            # embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
-            embed.set_footer(text=f"Source MAL | Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
-            embed.set_image(url=image)
-            await ctx.send(embed=embed)
-            
-        except IndexError:
-            await ctx.send("No result found")
+                    try:
+                        answer = await self.bot.wait_for('message', timeout=20, check=mcheck)
+
+                    except asyncio.TimeoutError:
+                        return await ctx.send("You didn't respond in time.")
+
+                    content = answer.content.strip()
+                    if not content.isnumeric():
+                        return await ctx.send("Respond with an integer")
+
+                    if d.intcheck(content) and int(content) <= max_ind and int(content) > 0:
+                        
+                        async with ctx.channel.typing():
+                                        
+                            image = response["results"][int(content)-1]["image_url"]
+                            title = response["results"][int(content)-1]["title"]
+                            episodes = response["results"][int(content)-1]["episodes"]
+                            score = response["results"][int(content)-1]["score"]
+                            desc = response["results"][int(content)-1]["synopsis"]
+                            url = response["results"][int(content)-1]["url"]
+
+                            embed = discord.Embed(
+                                title = title,
+                                color = discord.Colour.from_rgb(0,250,141), timestamp=ctx.message.created_at,
+                                url = url,
+                                description = desc
+                                )       
+                            embed.add_field(name="Episodes", value= episodes)
+                            embed.add_field(name="Score", value = score)
+                            embed.set_footer(text=f"Source MAL | Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+                            embed.set_image(url=image)
+                            await answer.delete()
+                            await mes.edit(embed=embed, content=None)
+                    else:
+                        return await ctx.send("You are proving me stupid for letting you use my commands")
+                            
+                except IndexError:
+                    await ctx.send("No result found")
+            else:
+                await ctx.send("No results found")
+        
         
     @anime.command(aliases=["sch"])
     async def schedule(self, ctx, query:str):
