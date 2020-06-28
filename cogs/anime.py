@@ -93,7 +93,10 @@ class anime(commands.Cog):
                             embed.add_field(name="Score", value = score)
                             embed.set_footer(text=f"Source MAL | Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
                             embed.set_image(url=image)
-                            await answer.delete()
+                            try:
+                                await answer.delete()
+                            except:
+                                pass
                             await mes.edit(embed=embed, content=None)
                     else:
                         return await ctx.send("You are proving me stupid for letting you use my commands")

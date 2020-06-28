@@ -444,7 +444,11 @@ class music(commands.Cog):
                 tags = soup.find(class_="lyrics")
                 lyrics = tags.text.strip()
                 lyrics = lyrics.replace("[", "**_").replace("]", "_**")
-                mes.delete()
+                await mes.delete()
+                try:
+                    await answer.delete()
+                except:
+                    pass
                 return await safe_send(ctx, lyrics, song.title)
         else:
             return await mes.edit(content="You are proving me stupid for letting you use my commands")
