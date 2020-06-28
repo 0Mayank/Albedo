@@ -225,7 +225,7 @@ class currency(commands.Cog):
             else:
                 await ctx.send(f"{member} is too poor, leave them alone and don't be a cunt.")
         else:
-            await ctx.send(f"You're too poor, very sed.")
+            await ctx.send("You're too poor, very sed.")
         
     # @steal.error
     # async def steal_error(self, ctx, error):

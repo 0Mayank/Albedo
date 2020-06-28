@@ -240,7 +240,7 @@ class admin(commands.Cog):
         if category != "":
             your_api = requests.get(f"https://api.publicapis.org/entries?category={category.lower()}&https=true").json()
         elif category.lower() == "categories":
-            your_api = requests.get(f"https://api.publicapis.org/categories").json()
+            your_api = requests.get("https://api.publicapis.org/categories").json()
         else:
             your_api = requests.get("https://api.publicapis.org/random?auth=null").json()
         if your_api['count'] == 0:

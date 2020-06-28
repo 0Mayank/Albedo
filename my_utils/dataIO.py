@@ -41,7 +41,7 @@ def backup_states(state_instance):
 
 def recover_states(state_instance):
     try:    
-        with open(f"json/states.json") as f:
+        with open("json/states.json") as f:
                 D = json.load(f)
     except:
         return
