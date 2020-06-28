@@ -328,7 +328,7 @@ class levels(commands.Cog):
 
         # VARIABLES
         member_rank = _get_rank(str(ctx.guild.id), str(member.id))
-        if member_rank == False:
+        if member_rank is False:
             return await ctx.send(f"**{member.name}** has not messaged yet, so their profile doesn't exist.")
         
         member_total_exp = _get_total_exp(str(ctx.guild.id), str(member.id))

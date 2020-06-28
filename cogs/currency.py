@@ -212,12 +212,12 @@ class currency(commands.Cog):
         if _get_dollars(self.ind, 'wallet') >= 1000:
             if _get_dollars(self.member_ind, 'wallet') >= 1000:
 
-                if _steal() == True:
+                if _steal() is True:
                     _remove_dollars(self.member_ind, int(get_member_wallet*steal_amount), 'wallet')
                     _add_dollars(self.ind, int(get_member_wallet*steal_amount), 'wallet')
                     await ctx.send(f"You stole ${int(get_member_wallet*steal_amount)} from {member}.")
 
-                elif _steal() == False:
+                elif _steal() is False:
                     _remove_dollars(self.ind, 1000, 'wallet')
                     _add_dollars(self.member_ind, 1000, 'wallet')
                     await ctx.send(f"You were caught stealing {member}\nYou paid them $1000.")

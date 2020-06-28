@@ -182,7 +182,7 @@ class meta(commands.Cog):
         dis_cmds = ""
         for cmd in cmds:
             comd = state.get_var(cmd)
-            if comd.server_wide == False:
+            if comd.server_wide is False:
                 dis_cmds += f"`{cmd}` disabled server-wide\n"
             if len(comd.channels) > 0:
                 dis_cmds += f"`{cmd}` disabled in channels {str(comd.channels).strip('{}')}\n"
