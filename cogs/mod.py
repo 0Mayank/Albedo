@@ -4,7 +4,6 @@ from discord.ext import commands
 from discord.utils import get
 from my_utils.guildstate import state_instance
 from my_utils import default
-import os
 from my_utils import permissions
 from my_utils.converters import MemberID, BannedMember, ActionReason
 import asyncio

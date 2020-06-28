@@ -1,11 +1,9 @@
 import os
 import logging
-
-import discord
 from discord.ext import commands
 
 from my_utils.default import all_cases, get
-from my_utils.data import Bot, HelpCommand
+from my_utils.data import HelpCommand
 from my_utils.guildstate import state_instance
 from honeybadger import honeybadger
 
