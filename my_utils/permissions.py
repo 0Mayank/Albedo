@@ -40,7 +40,7 @@ async def check_priv(ctx, member):
             if ctx.author.id not in almins:
                 return await ctx.send(f"You dare {ctx.command.name} my lords (●'◡'●)")
             else:
-                return await ctx.send(f"I am sorry, i cannot betray either of my lords")
+                return await ctx.send("I am sorry, i cannot betray either of my lords")
 
         # Check if user bypasses
         if ctx.author.id == ctx.guild.owner.id:
