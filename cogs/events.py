@@ -33,7 +33,7 @@ class events(commands.Cog):
             await ctx.send_help(helper)
 
         elif isinstance(err, errors.CommandInvokeError):
-            error = f"Command invoke error:\n{default.traceback_maker(err.original, only_traceback=True)}"
+            error = f"Command invoke error:\n{default.traceback_maker(err.original)}"
             if "2000 or fewer" in str(err) or len(ctx.message.clean_content) > 1900:
                 return await ctx.send(
                     f"You attempted to make the command display more than 2,000 characters...\n"
@@ -41,7 +41,7 @@ class events(commands.Cog):
                 )
 
             await ctx.send(f"There was an error processing the command ಥ_ಥ")
-            honeybadger.notify(error)
+            honeybadger.notify(error, context= {'Command': ctx.message.clean_content, 'Traceback': default.traceback_maker(err.original, only_traceback=True)})
             logging.error("Ignoring exception in command {}:".format(ctx.command))
             logging.error("\n" + "".join(traceback.format_exception(type(error), err, err.__traceback__)))
 

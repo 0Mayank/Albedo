@@ -421,7 +421,7 @@ class music(commands.Cog):
                     break
             
             if (len(txt)-len("**Please select a track from the following results by responding with `1 - 5`:**\n")):
-                await ctx.send(txt) 
+                mes = await ctx.send(txt) 
             else:
                 return await ctx.send(f"No result found {pepehands}")
 
@@ -444,10 +444,10 @@ class music(commands.Cog):
                 tags = soup.find(class_="lyrics")
                 lyrics = tags.text.strip()
                 lyrics = lyrics.replace("[", "**_").replace("]", "_**")
-                
+                mes.delete()
                 return await safe_send(ctx, lyrics, song.title)
         else:
-            return await ctx.send("You are proving me stupid for letting you use my commands")
+            return await mes.edit(content="You are proving me stupid for letting you use my commands")
         
     @commands.command(brief="Plays audio from <url>.")
     @commands.guild_only()
