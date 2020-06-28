@@ -7,9 +7,9 @@ almins = default.get("config.json").almins
 
 
 def is_owner(ctx = None, user =  None):
-    if user == None:
+    if user is None:
         return ctx.author.id in almins
-    elif ctx == None:   
+    elif ctx is None:   
         return user.id in almins
 
 

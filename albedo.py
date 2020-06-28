@@ -56,7 +56,7 @@ for filename in os.listdir('cogs'):                                   #Loads all
         bot.load_extension(f'cogs.{filename[:-3]}')
 
 def run():
-    bot.run(config.token[0])
+    bot.run(config.token[1])
     
 
 #logging setup

@@ -247,7 +247,7 @@ class admin(commands.Cog):
             return await ctx.send("No APIs found")
         apis = f"{your_api['entries'][0]['Category']} apis\n"
         def auth(index):
-            if your_api['entries'][i]['Auth'] != None:
+            if your_api['entries'][i]['Auth'] is not None:
                 return your_api['entries'][i]['Auth']
             return "None"
 

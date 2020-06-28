@@ -183,7 +183,7 @@ class levels(commands.Cog):
         _initialise(str(ctx.author.id), False)
         ind = _get_index(str(ctx.author.id))
         banner = _get_color(ind, "banner")
-        if color != None:
+        if color is not None:
             color = color.strip('<>')
             if color == banner:
                 pass
@@ -193,7 +193,7 @@ class levels(commands.Cog):
                 except ValueError:
                     try:
                         response = requests.get(color)
-                        if response.content == None:
+                        if response.content is None:
                             return await ctx.send("The url doesn't contain an image. Send a valid image url")
                         with open(f"banners/{ctx.author.id}", "wb") as f:
                             f.write(response.content)

@@ -26,10 +26,10 @@ class meta(commands.Cog):
 
         embed = discord.Embed(color = discord.Colour.from_rgb(0, 0, 0), timestamp = ctx.message.created_at)
         state = state_instance.get_state(ctx.guild.id)
-        if prefix == None:
+        if prefix is None:
                 embed.add_field(name="Current Prefix", value=f"Current prefix `{state.bot_prefix}`", inline=False)
                 embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
-        elif prefix != None:
+        elif prefix is not None:
             if ctx.message.author.id in al_admins:
                 state.bot_prefix = prefix
                 embed.add_field(name="Prefix", value=f"Prefix changed to `{state.bot_prefix}`", inline=False)
@@ -70,14 +70,14 @@ class meta(commands.Cog):
         if isinstance(role_chan, discord.TextChannel):
             chann = comd.channels
             chann.discard(str(role_chan))
-            val = state.command(comd.server_wide, chann, comd.roles, False) if str(role_chan) not in state.get_var("all").channels else state.command(comd.server_wide, chann, comd.roles, True)
+            val = state.command(comd.server_wide, chann, comd.roles, False) if str(role_chan) not in state.get_var("all").channels and state.get_var("all").server_wide is True else state.command(comd.server_wide, chann, comd.roles, True)
             await ctx.send(f"Enabled `{command}` in {role_chan.mention}")
         elif isinstance(role_chan, discord.Role):
             rol = comd.roles
             rol.discard(str(role_chan))
-            val = state.command(comd.server_wide, comd.channels, rol, False) if str(role_chan) not in state.get_var("all").roles else state.command(comd.server_wide, comd.channels, rol, True)
+            val = state.command(comd.server_wide, comd.channels, rol, False) if str(role_chan) not in state.get_var("all").roles and state.get_var("all").server_wide is True else state.command(comd.server_wide, comd.channels, rol, True)
             await ctx.send(f"Enabled `{command}` for {role_chan.mention}")
-        elif role_chan != None:
+        elif role_chan is not None:
             raise commands.errors.BadArgument()
         else:
             if command != "all":
@@ -146,7 +146,7 @@ class meta(commands.Cog):
             rol.add(str(role_chan))
             val = state.command(comd.server_wide, comd.channels, rol, False)
             await ctx.send(f"Disabled `{command}` for {role_chan.mention}")
-        elif role_chan != None:
+        elif role_chan is not None:
             raise commands.errors.BadArgument()
         else:
             val = state.command(False, set(), set(), False)

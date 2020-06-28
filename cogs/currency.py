@@ -104,7 +104,7 @@ class currency(commands.Cog):
     async def balance(self, ctx, member: discord.Member = None):
         """Shows the balance of a user, if mentioned or your balance."""
         
-        if member == None:
+        if member is None:
             member = ctx.author
         _initalise(str(member.id), False)            
         sliced_author = str(member)[:-5]

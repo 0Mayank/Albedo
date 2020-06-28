@@ -113,7 +113,7 @@ def retrieve(jsonfile):
 
 def delete(file, jsonFile = None, keyName = None):
     os.remove(file)
-    if jsonFile != None and keyName != None:   
+    if jsonFile is not None and keyName is not None:   
         data = retrieve(jsonFile)
         data[keyName].remove(file)
         save(jsonFile, data)

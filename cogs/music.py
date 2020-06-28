@@ -392,7 +392,7 @@ class music(commands.Cog):
         shlepaguya = "<:shlepaguya:702856967290486854>"
         pepehands = "<:PepeHands:702856272894099496>"
 
-        if await audio_playing(ctx) and query == None:
+        if await audio_playing(ctx) and query is None:
             async with ctx.channel.typing():
                 query = state.now_playing.clean_title
                 try:
@@ -407,7 +407,7 @@ class music(commands.Cog):
                 
                 return await safe_send(ctx, lyrics, song.title)
 
-        if query == None:
+        if query is None:
             raise commands.errors.BadArgument()
 
         async with ctx.channel.typing():
@@ -463,7 +463,7 @@ class music(commands.Cog):
         req_voice = ctx.author.voice
         state = self.get_state(ctx.guild)  # get the guild's state
 
-        if client and client.channel and req_voice != None:
+        if client and client.channel and req_voice is not None:
             if req_voice.channel != client.channel:
                 users_in_channel = len([member for member in client.channel.members if not member.bot])
                 if users_in_channel:
@@ -483,7 +483,7 @@ class music(commands.Cog):
                 message = await ctx.send(f"Added to queue at index {len(state.playlist)}", embed=video.get_embed())
             await self._add_reaction_controls(message)
         else:
-            if req_voice != None:
+            if req_voice is not None:
                 async with ctx.channel.typing():    
                     channel = req_voice.channel
                     try:
@@ -529,7 +529,7 @@ class music(commands.Cog):
                         client.stop()
                     
                     elif reaction.emoji == "⏮":
-                        if state.last_audio == None:    # if its the first song, restart it
+                        if state.last_audio is None:    # if its the first song, restart it
                             if state.loop is True:
                                 client.stop()
                             else:
