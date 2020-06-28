@@ -129,7 +129,7 @@ class anime(commands.Cog):
                 embed.add_field(name='\u200b', value = f'• {result[i]["title"]}')
 
             if x:
-                for j in range(x):
+                for _ in range(x):
                     embed.add_field(name="\u200b", value = "\n\u200b")
 
             embed.set_footer(text=f"Source MAL | Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
@@ -162,7 +162,7 @@ class anime(commands.Cog):
         
         while 1:
             try:
-                reaction, user = await self.bot.wait_for('reaction_add', timeout=60, check=rcheck)
+                _, user = await self.bot.wait_for('reaction_add', timeout=60, check=rcheck)
             except asyncio.TimeoutError:
                 try:
                     await embed_react.clear_reactions()
