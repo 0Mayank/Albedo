@@ -1,4 +1,3 @@
-import discord
 from discord.ext import commands
 
 def shared_cooldown(rate, per, type=commands.BucketType.default):

@@ -11,7 +11,6 @@ from honeybadger import honeybadger
 
 from my_utils import default
 from my_utils.guildstate import state_instance
-from my_utils.permissions import has_permissions
 
 
 class events(commands.Cog):
