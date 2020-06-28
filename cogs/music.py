@@ -201,7 +201,7 @@ class music(commands.Cog):
             state.loop = True
             state.loop_queue = False
             reply = "Looping current song"
-        elif state.loop is True or state.loop_queue == True:
+        elif state.loop is True or state.loop_queue is True:
             state.loop = False
             state.loop_queue = False
             reply = "Looping disabled"
