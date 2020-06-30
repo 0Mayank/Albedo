@@ -148,8 +148,8 @@ class fun(commands.Cog):
 
             definition = result['definition']
             definition = definition.replace("[", "**").replace("]", "**")
-            if len(definition) >= 1500:
-                definition = definition[:1500]
+            if len(definition) >= 1000:
+                definition = definition[:1000]
                 definition = definition.rsplit(' ', 1)[0]
                 definition += '...'
             
