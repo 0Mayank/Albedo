@@ -173,6 +173,9 @@ class music(commands.Cog):
         await ctx.send(reply)
     
     @loop.command(aliases = ["full"])
+    @commands.guild_only()
+    @commands.check(audio_playing)
+    @commands.check(in_voice_channel)
     @cooldown
     async def all(self, ctx):
         """loops the queue"""
