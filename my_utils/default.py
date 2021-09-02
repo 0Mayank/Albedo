@@ -8,6 +8,8 @@ from io import BytesIO
 import discord
 import timeago as timesince
 
+from my_utils.guildstate import state_instance
+
 
 def get(file):
     try:
@@ -113,7 +115,7 @@ def retrieve(jsonfile):
 
 def delete(file, jsonFile = None, keyName = None):
     os.remove(file)
-    if jsonFile is not None and keyName is not None:   
+    if jsonFile != None and keyName != None:   
         data = retrieve(jsonFile)
         data[keyName].remove(file)
         save(jsonFile, data)
@@ -170,7 +172,7 @@ async def safe_send(ctx, txt, name):
                 txt2 = txt2[1000:]
                 txt2 = big_chunk[1] + txt2 if len(big_chunk)>1 else txt2
                 i+=1000
-            embed.set_footer(text="END")
+            embed.set_footer(text=f"END")
             await ctx.send(embed=embed)
     await splitter(txt)
     

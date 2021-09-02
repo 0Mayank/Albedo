@@ -10,7 +10,6 @@ config.json
 cogs/eval.py
 .env
 .vscode
-youtube-wGUroMhu1M0-Sword_Art_Online_Alicization_-_War_of_Underworld_Ending_1_-_unlasting_by_LiSA.webm
 .mp3
 .webm
 .git
@@ -26,6 +25,7 @@ albedo.log
 .venv
 ffmpeg/
 json/
+Albedo_production/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

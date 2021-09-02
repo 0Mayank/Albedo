@@ -4,6 +4,7 @@ from discord.ext import commands
 from discord.utils import get
 from my_utils.guildstate import state_instance
 from my_utils import default
+import os
 from my_utils import permissions
 from my_utils.converters import MemberID, BannedMember, ActionReason
 import asyncio
@@ -25,7 +26,7 @@ class mod(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.config = default.get("config.json")
-    
+
     @commands.command(aliases=["nick"])
     @commands.guild_only()
     @permissions.has_permissions(manage_nicknames=True)
@@ -360,7 +361,7 @@ class mod(commands.Cog):
 
         total_reactions = 0
         async for message in ctx.history(limit=search, before=ctx.message):
-            if message.reactions:
+            if len(message.reactions):
                 total_reactions += sum(r.count for r in message.reactions)
                 await message.clear_reactions()
 

@@ -1,9 +1,11 @@
 import os
 import logging
+
+import discord
 from discord.ext import commands
 
 from my_utils.default import all_cases, get
-from my_utils.data import HelpCommand
+from my_utils.data import Bot, HelpCommand
 from my_utils.guildstate import state_instance
 from honeybadger import honeybadger
 
@@ -20,7 +22,8 @@ bot = commands.Bot(
     command_prefix=get_prefix,
     case_insensitive=False,
     command_attrs=dict(hidden=True),
-    help_command=HelpCommand()
+    help_command=HelpCommand(),
+    intents=discord.Intents.all()
 )
 
 @bot.check
@@ -56,7 +59,7 @@ for filename in os.listdir('cogs'):                                   #Loads all
         bot.load_extension(f'cogs.{filename[:-3]}')
 
 def run():
-    bot.run(config.token[1])
+    bot.run(config.token[0])
     
 
 #logging setup

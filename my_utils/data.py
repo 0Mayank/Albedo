@@ -26,7 +26,7 @@ class HelpCommand(DefaultHelpCommand):
         color = discord.Colour.from_rgb(0,250,141), timestamp = ctx.message.created_at)
         
         for cog in mapping.keys():
-            if cog is not None:    
+            if cog != None:    
                 if len(cog.get_commands()) != 0:
                     if not permissions.is_owner(ctx):
                         if cog.qualified_name == "admin":

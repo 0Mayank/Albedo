@@ -22,7 +22,7 @@ class utility(commands.Cog):
     async def userinfo(self, ctx, member: discord.Member = None):
         """Gets you all the info for a perticular user, or yourself(don't mention anyone)"""
         
-        if member is None:
+        if member == None:
             member = ctx.author
 
         roles = [role for role in member.roles]

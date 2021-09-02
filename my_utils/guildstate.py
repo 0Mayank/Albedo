@@ -46,6 +46,7 @@ class GuildState:
 
     def set_var(self, variable, value):
         setattr(self, variable, value)
+        return
 
 state_instance = _states()
 recover_states(state_instance)

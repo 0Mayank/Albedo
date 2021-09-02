@@ -104,7 +104,7 @@ class currency(commands.Cog):
     async def balance(self, ctx, member: discord.Member = None):
         """Shows the balance of a user, if mentioned or your balance."""
         
-        if member is None:
+        if member == None:
             member = ctx.author
         _initalise(str(member.id), False)            
         sliced_author = str(member)[:-5]
@@ -212,12 +212,12 @@ class currency(commands.Cog):
         if _get_dollars(self.ind, 'wallet') >= 1000:
             if _get_dollars(self.member_ind, 'wallet') >= 1000:
 
-                if _steal() is True:
+                if _steal() == True:
                     _remove_dollars(self.member_ind, int(get_member_wallet*steal_amount), 'wallet')
                     _add_dollars(self.ind, int(get_member_wallet*steal_amount), 'wallet')
                     await ctx.send(f"You stole ${int(get_member_wallet*steal_amount)} from {member}.")
 
-                elif _steal() is False:
+                elif _steal() == False:
                     _remove_dollars(self.ind, 1000, 'wallet')
                     _add_dollars(self.member_ind, 1000, 'wallet')
                     await ctx.send(f"You were caught stealing {member}\nYou paid them $1000.")
@@ -225,7 +225,7 @@ class currency(commands.Cog):
             else:
                 await ctx.send(f"{member} is too poor, leave them alone and don't be a cunt.")
         else:
-            await ctx.send("You're too poor, very sed.")
+            await ctx.send(f"You're too poor, very sed.")
         
     # @steal.error
     # async def steal_error(self, ctx, error):

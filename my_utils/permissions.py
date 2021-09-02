@@ -7,9 +7,9 @@ almins = default.get("config.json").almins
 
 
 def is_owner(ctx = None, user =  None):
-    if user is None:
+    if user == None:
         return ctx.author.id in almins
-    elif ctx is None:   
+    elif ctx == None:   
         return user.id in almins
 
 
@@ -40,7 +40,7 @@ async def check_priv(ctx, member):
             if ctx.author.id not in almins:
                 return await ctx.send(f"You dare {ctx.command.name} my lords (●'◡'●)")
             else:
-                return await ctx.send("I am sorry, i cannot betray either of my lords")
+                return await ctx.send(f"I am sorry, i cannot betray either of my lords")
 
         # Check if user bypasses
         if ctx.author.id == ctx.guild.owner.id:

@@ -7,6 +7,7 @@ import sys
 import requests
 import asyncio
 import re
+from io import BytesIO
 
 from discord.ext import commands
 from my_utils import permissions, default, dataIO
@@ -240,14 +241,14 @@ class admin(commands.Cog):
         if category != "":
             your_api = requests.get(f"https://api.publicapis.org/entries?category={category.lower()}&https=true").json()
         elif category.lower() == "categories":
-            your_api = requests.get("https://api.publicapis.org/categories").json()
+            your_api = requests.get(f"https://api.publicapis.org/categories").json()
         else:
             your_api = requests.get("https://api.publicapis.org/random?auth=null").json()
         if your_api['count'] == 0:
             return await ctx.send("No APIs found")
         apis = f"{your_api['entries'][0]['Category']} apis\n"
         def auth(index):
-            if your_api['entries'][i]['Auth'] is not None:
+            if your_api['entries'][i]['Auth'] != None:
                 return your_api['entries'][i]['Auth']
             return "None"
 
@@ -305,6 +306,6 @@ class admin(commands.Cog):
         except Exception as e:
             await ctx.send(e)
         await ctx.message.delete(delay=1)
-    
+
 def setup(bot):
     bot.add_cog(admin(bot))

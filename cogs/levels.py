@@ -183,7 +183,7 @@ class levels(commands.Cog):
         _initialise(str(ctx.author.id), False)
         ind = _get_index(str(ctx.author.id))
         banner = _get_color(ind, "banner")
-        if color is not None:
+        if color != None:
             color = color.strip('<>')
             if color == banner:
                 pass
@@ -193,7 +193,7 @@ class levels(commands.Cog):
                 except ValueError:
                     try:
                         response = requests.get(color)
-                        if response.content is None:
+                        if response.content == None:
                             return await ctx.send("The url doesn't contain an image. Send a valid image url")
                         with open(f"banners/{ctx.author.id}", "wb") as f:
                             f.write(response.content)
@@ -328,7 +328,7 @@ class levels(commands.Cog):
 
         # VARIABLES
         member_rank = _get_rank(str(ctx.guild.id), str(member.id))
-        if member_rank is False:
+        if member_rank == False:
             return await ctx.send(f"**{member.name}** has not messaged yet, so their profile doesn't exist.")
         
         member_total_exp = _get_total_exp(str(ctx.guild.id), str(member.id))
