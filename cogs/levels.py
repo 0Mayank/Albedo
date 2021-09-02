@@ -343,14 +343,13 @@ class levels(commands.Cog):
         arcc = _get_color(ind, "arc color")
         rankerc = _get_color(ind, "ranker color")
         arcpathc = _get_color(ind, "arc path color")
+        bannerc = banner_id
 
         # PROCESSING THE VARIABLES
         for image in os.listdir('banners'):     # process the banner of the user based on the color, url or the downloaded file
             if str(banner_id) == image.split(".")[0]:
                 bannerc = image
                 break
-            else:
-                bannerc = banner_id
 
         member_total_exp = d.implement_numeral(member_total_exp)    #Adds, k, m, etc.
 
