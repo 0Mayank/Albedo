@@ -25,6 +25,7 @@ albedo.log
 .venv
 ffmpeg/
 json/
+json/token.json
 Albedo_production/
 
 # Byte-compiled / optimized / DLL files

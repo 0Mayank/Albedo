@@ -96,39 +96,47 @@ class anime(commands.Cog):
 
                                 def ran_out_vars(more_var):
                                     this = assign([more_var])
-                                    try:
-                                        var_str = ""
-                                        for i in range(len(this)):
-                                            var_str += "`"+this[i]['name']+"`" + " "
-                                        return var_str
-                                    except KeyError:
-                                        return "`"+"N/A"+"`"
+                                    if this != "`"+"N/A"+"`":
+                                        try:
+                                            var_str = ""
+                                            for i in range(len(this)):
+                                                var_str += "`"+this[i]['name']+"`" + " "
+                                            return var_str
+                                        except KeyError:
+                                            return "`"+"N/A"+"`"
+                                    return "`"+"N/A"+"`"
 
                                 def assign(path):
                                     dcopy = new_response
                                     for key in path:
                                         if key in dcopy:
-                                            dcopy = dcopy[key]
+                                            if dcopy[key]:
+                                                dcopy = dcopy[key]
+                                            else:
+                                                return '`'+'N/A'+'`'  
                                         else:
-                                            return '`'+'N/A'+'`'
-                                            
+                                            return '`'+'N/A'+'`'  
                                     return dcopy
 
                                 image = assign(["main_picture", "large"])
                                 title = assign(["title"])
-                                popularity = "`"+str(assign(["title"]))+"`"
+                                popularity = "`"+str(assign(["popularity"]))+"`"
                                 ja_title = assign(["alternative_titles", "ja"])
                                 status = "`"+assign(["status"])+"`"
                                 episodes = "`"+str(assign(["num_episodes"]))+"`"
                                 score = "`"+str(assign(["mean"]))+"`"
                                 desc = assign(["synopsis"])
-                                rating = "`"+str(assign(["rating"]).capitalize())+"`"
-                                premiered = "`"+(assign(['start_season', 'season']))[0].upper() + (assign(['start_season', 'season']))[1:] + " " + str(assign(['start_season', 'year']))+"`"
+                                rating = "`"+str(assign(["rating"])).capitalize()+"`"
                                 rank = "`"+str(assign(['rank']))+"`"
                                 genres = ran_out_vars("genres")
-                                # studios = ran_out_vars("studios")
+                                studios = ran_out_vars("studios")
                                 aired = "`"+str(assign(["start_date"]))+"`"
                                 end = "`"+str(assign(["end_date"]))+"`"
+
+                                if (assign(['start_season', 'season'])) != '`'+'N/A'+'`':
+                                    premiered = "`"+(assign(['start_season', 'season']))[0].upper() + (assign(['start_season', 'season']))[1:] + " " + str(assign(['start_season', 'year']))+"`"
+                                else:
+                                    premiered = '`'+'N/A'+'`'
 
                                 if assign(['broadcast', 'day_of_the_week']) != '`'+'N/A'+'`':
                                     broadcast = "`"+assign(['broadcast', 'day_of_the_week']).capitalize()+" "+assign(['broadcast', 'start_time'])+"`"
@@ -138,7 +146,7 @@ class anime(commands.Cog):
                                 embed = discord.Embed(
                                     title = title+" "+"("+ja_title+")",
                                     color = discord.Colour.from_rgb(0,250,141), timestamp=ctx.message.created_at,
-                                    description = desc
+                                    description = f"**Synopsis**\n\n{desc}"
                                     )       
                                 embed.add_field(name="Episodes", value= episodes)
                                 embed.add_field(name="Score", value = score)
@@ -148,7 +156,7 @@ class anime(commands.Cog):
                                 embed.add_field(name="End", value=end)
                                 embed.add_field(name="Broadcast", value=broadcast)
                                 embed.add_field(name="Genre", value=genres)
-                                # embed.add_field(name="Studio", value=studios)
+                                embed.add_field(name="Studio", value=studios)
                                 embed.add_field(name="Rank", value=rank)
                                 embed.add_field(name="Premiered", value=premiered)
                                 embed.add_field(name="Age rating", value=rating)
@@ -236,26 +244,31 @@ class anime(commands.Cog):
 
                                 def ran_out_vars(more_var):
                                     this = assign([more_var])
-                                    try:
-                                        var_str = ""
-                                        for i in range(len(this)):
-                                            var_str += "`"+this[i]['name']+"`" + " "
-                                        return var_str
-                                    except KeyError:
-                                        return "`"+"N/A"+"`"
+                                    if this != '`'+'N/A'+'`':
+                                        try:
+                                            var_str = ""
+                                            for i in range(len(this)):
+                                                var_str += "`"+this[i]['name']+"`" + " "
+                                            return var_str
+                                        except KeyError:
+                                            return "`"+"N/A"+"`"
+                                    return "`"+"N/A"+"`"
 
                                 def assign(path):
                                     dcopy = new_response
                                     for key in path:
                                         if key in dcopy:
-                                            dcopy = dcopy[key]
+                                            if dcopy[key]:
+                                                dcopy = dcopy[key]
+                                            else:
+                                                return '`'+'N/A'+'`'
                                         else:
                                             return '`'+'N/A'+'`'
                                     return dcopy
 
                                 image = assign(["main_picture", "large"])
                                 title = assign(["title"])
-                                popularity = "`"+str(assign(["title"]))+"`"
+                                popularity = "`"+str(assign(["popularity"]))+"`"
                                 ja_title = assign(["alternative_titles", "ja"])
                                 status = "`"+assign(["status"])+"`"
                                 num_volumes = "`"+str(assign(["num_volumes"]))+"`"
@@ -270,7 +283,7 @@ class anime(commands.Cog):
                                 embed = discord.Embed(
                                     title = title+" "+"("+ja_title+")",
                                     color = discord.Colour.from_rgb(0,250,141), timestamp=ctx.message.created_at,
-                                    description = desc
+                                    description = f"**Synopsis**\n\n{desc}"
                                     )       
                                 embed.add_field(name="Volumes", value= num_volumes)
                                 embed.add_field(name="Chapters", value= num_chapters)
