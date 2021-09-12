@@ -26,6 +26,7 @@ albedo.log
 ffmpeg/
 json/
 Albedo_production/
+vstart.bat
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
