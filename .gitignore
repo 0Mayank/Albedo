@@ -25,6 +25,7 @@ albedo.log
 .venv
 ffmpeg/
 json/
+json/token.json
 Albedo_production/
 vstart.bat
 
@@ -54,3 +55,4 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+
