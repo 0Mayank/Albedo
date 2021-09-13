@@ -1,3 +1,4 @@
+from pathlib import Path
 import time
 import aiohttp
 import discord
@@ -12,6 +13,7 @@ from io import BytesIO
 from discord.ext import commands
 from my_utils import permissions, default, dataIO
 from my_utils.guildstate import state_instance
+from my_utils.formats import DisplayablePath
 
 
 class admin(commands.Cog):
@@ -306,6 +308,32 @@ class admin(commands.Cog):
         except Exception as e:
             await ctx.send(e)
         await ctx.message.delete(delay=1)
+
+    @fil.group()
+    @commands.check(permissions.is_owner)
+    async def show(self, ctx, folder: str = None):
+        structure = ""
+        if folder is None:
+            folder = "./"
+
+        def criteria(path):
+            ignore_list = [".env", "Albedo_production", "ffmpeg", "__pycache__", ".git"]
+            for ipath in ignore_list:
+                if ipath in f"{path}":
+                    return False
+            return True
+
+        paths = DisplayablePath.make_tree(Path(folder), criteria=criteria)
+
+        for path in paths:
+            structure += f"{path.displayable()}\n"
+
+        if len(structure) < 2000:
+            await ctx.send(structure)
+        else:
+            for chunk in default.text_splitter(structure):
+               await ctx.send(chunk)
+        
 
 def setup(bot):
     bot.add_cog(admin(bot))

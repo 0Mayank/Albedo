@@ -9,6 +9,7 @@ import discord
 import timeago as timesince
 
 from my_utils.guildstate import state_instance
+from textwrap import wrap
 
 
 def get(file):
@@ -175,7 +176,9 @@ async def safe_send(ctx, txt, name):
             embed.set_footer(text=f"END")
             await ctx.send(embed=embed)
     await splitter(txt)
-    
+
+def text_splitter(text: str):
+    return wrap(text, 2000)
 
 def implement_numeral(number):
     count = 0
