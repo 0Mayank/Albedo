@@ -8,6 +8,7 @@ import sys
 import requests
 import asyncio
 import re
+import json
 from io import BytesIO
 
 from discord.ext import commands
@@ -317,7 +318,9 @@ class admin(commands.Cog):
             folder = "./"
 
         def criteria(path):
-            ignore_list = [".env", "Albedo_production", "ffmpeg", "__pycache__", ".git"]
+            with open("config.json", "r") as f:
+                ignore_list = json.load(f)["ignore_list"]
+ 
             for ipath in ignore_list:
                 if ipath in f"{path}":
                     return False
