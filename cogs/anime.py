@@ -175,7 +175,7 @@ class anime(commands.Cog):
                 else:
                     await ctx.send("No results found")    
         
-        url = f'https://api.myanimelist.net/v2/anime?q={query}'
+        url = f'https://api.myanimelist.net/v2/anime?q={query}&nsfw=true'
         headers = {
             "Authorization": f"Bearer {get('json/token.json').bearer}"
         }
@@ -183,7 +183,7 @@ class anime(commands.Cog):
         if "error" in old_response:
             update_token()
 
-            url = f'https://api.myanimelist.net/v2/anime?q={query}'
+            url = f'https://api.myanimelist.net/v2/anime?q={query}&nsfw=true'
             headers = {
                 "Authorization": f"Bearer {get('json/token.json').bearer}"
             }
@@ -191,7 +191,7 @@ class anime(commands.Cog):
 
             await anime_exec(self, ctx, response)
         else:
-            url = f'https://api.myanimelist.net/v2/anime?q={query}'
+            url = f'https://api.myanimelist.net/v2/anime?q={query}&nsfw=true'
             headers = {
                 "Authorization": f"Bearer {get('json/token.json').bearer}"
             }
@@ -309,21 +309,21 @@ class anime(commands.Cog):
                 else:
                     await ctx.send("No results found")
 
-        url = f'https://api.myanimelist.net/v2/manga?q={query}'
+        url = f'https://api.myanimelist.net/v2/manga?q={query}&nsfw=true'
         headers = {
             "Authorization": f"Bearer {get('json/token.json').bearer}"
         }
         old_response = requests.request("GET", url, headers=headers).json()
         if "error" in old_response:
             update_token()
-            url = f'https://api.myanimelist.net/v2/manga?q={query}'
+            url = f'https://api.myanimelist.net/v2/manga?q={query}&nsfw=true'
             headers = {
                 "Authorization": f"Bearer {get('json/token.json').bearer}"
             }
             response = requests.request("GET", url, headers=headers).json()
             await manga_exec(self, ctx, response)
         else:
-            url = f'https://api.myanimelist.net/v2/manga?q={query}'
+            url = f'https://api.myanimelist.net/v2/manga?q={query}&nsfw=true'
             headers = {
                 "Authorization": f"Bearer {get('json/token.json').bearer}"
             }
