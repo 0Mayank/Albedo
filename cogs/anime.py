@@ -138,7 +138,7 @@ class anime(commands.Cog):
                                 else:
                                     premiered = '`'+'N/A'+'`'
 
-                                if assign(['broadcast', 'day_of_the_week']) != '`'+'N/A'+'`':
+                                if assign(['broadcast', 'day_of_the_week']) and assign(['broadcast', 'start_time']) != '`'+'N/A'+'`':
                                     broadcast = "`"+assign(['broadcast', 'day_of_the_week']).capitalize()+" "+assign(['broadcast', 'start_time'])+"`"
                                 else:
                                     broadcast = '`'+'N/A'+'`'

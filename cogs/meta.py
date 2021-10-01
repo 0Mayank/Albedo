@@ -40,7 +40,7 @@ class meta(commands.Cog):
     
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(aliases=["invite"])
     async def botinvite(self, ctx):
         """Sends the invite link of the bot"""
 
