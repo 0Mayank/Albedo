@@ -392,8 +392,8 @@ class music(commands.Cog):
     @cooldown
     async def lyrics(self, ctx, *, query:str =None):
         state = self.get_state(ctx.guild)
-        shlepaguya = "<:shlepaguya:702856967290486854>"
-        pepehands = "<:PepeHands:702856272894099496>"
+        # shlepaguya = "<:shlepaguya:702856967290486854>"
+        # pepehands = "<:PepeHands:702856272894099496>"
 
         if await audio_playing(ctx) and query is None:
             async with ctx.channel.typing():
@@ -401,7 +401,7 @@ class music(commands.Cog):
                 try:
                     song = get_song(query, 0)
                 except:
-                    return await ctx.send(f"Cannot find lyrics, i go away {shlepaguya}")
+                    return await ctx.send(f"Cannot find lyrics")
                 source = requests.get(song.path).text
                 soup = BeautifulSoup(source, 'lxml')
                 tags = soup.find(class_="lyrics")
@@ -426,7 +426,7 @@ class music(commands.Cog):
             if (len(txt)-len("**Please select a track from the following results by responding with `1 - 5`:**\n")):
                 mes = await ctx.send(txt) 
             else:
-                return await ctx.send(f"No result found {pepehands}")
+                return await ctx.send(f"No result found")
 
         def mcheck(message):
             if message.author == ctx.author and message.channel == ctx.channel:
