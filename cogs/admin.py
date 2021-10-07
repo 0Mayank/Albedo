@@ -336,7 +336,43 @@ class admin(commands.Cog):
         else:
             for chunk in default.text_splitter(structure):
                await ctx.send(chunk)
-        
+
+    @commands.command(aliases= ["gsi"])
+    @commands.check(permissions.is_owner)
+    async def get_server_invite(self, ctx, *, params: str):
+        guilds = self.bot.guilds
+        args = {"max_age": 0, "max_uses": 0, "temporary": False, "unique": False, "reason": None, "name": None, "id": None}
+
+        def resolve(p):
+            try:
+                return int(p)
+            except:
+                if p.lower() == "true":
+                    return True
+                elif p.lower() == "false":
+                    return False
+                else:
+                    return p
+
+        #--name = server name --max_age=9 --max_uses =4 --temporary= True --unique = false --reason = testing
+        for k in args.keys():
+            pattern = re.compile(rf'--{k}([ {0,1}|=])[^--]+', re.IGNORECASE)
+            match = pattern.search(params)
+            
+            if match:
+                args[k] = resolve(match.group(0).split("=")[-1].strip())
+
+        if args["name"] is None and args["id"] is None:    
+            return await ctx.send(f"{guilds}")      
+
+        for guild in guilds:
+            if (args["name"] == guild.name or args["name"] is None) and (args["id"] == guild.id or args["id"] is None):
+                invite = await guild.text_channels[0].create_invite(
+                    max_age=args["max_age"], max_uses=args["max_uses"], temporary=args["temporary"], unique=args["unique"], reason=args["reason"]
+                    )
+                return await ctx.send(f"{invite.url}")
+
+        return await ctx.send(f"I am not in this server")
 
 def setup(bot):
     bot.add_cog(admin(bot))
